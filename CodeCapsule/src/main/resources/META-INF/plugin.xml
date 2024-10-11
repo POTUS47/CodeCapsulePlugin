@@ -23,9 +23,10 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
+
     <projectListeners>
         <listener
-                class="plugin.capsule.ProjectListener"
+                class="plugin.capsule.CloseDown"
                 topic="com.intellij.openapi.project.ProjectManagerListener">
         </listener>
     </projectListeners>

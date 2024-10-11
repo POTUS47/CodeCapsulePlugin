@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< Updated upstream
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CodeCapsule.iml" filepath="$PROJECT_DIR$/.idea/modules/CodeCapsule.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CodeCapsule.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CodeCapsule.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CodeCapsule.test.iml" filepath="$PROJECT_DIR$/.idea/modules/CodeCapsule.test.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/CodeCapsulePlugin.iml" filepath="$PROJECT_DIR$/.idea/CodeCapsulePlugin.iml" />
+>>>>>>> Stashed changes
     </modules>
   </component>
 </project>

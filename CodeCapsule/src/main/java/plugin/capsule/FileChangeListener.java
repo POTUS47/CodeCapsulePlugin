@@ -13,7 +13,7 @@ import java.util.List;
 public class FileChangeListener implements VirtualFileListener {
 
     // 使用 List 来存储改变的文件路径
-    private final List<Path> changedFilePath = new ArrayList<>();
+    private static final List<Path> changedFilePath = new ArrayList<>();
 
     @Override
     public void contentsChanged(@NotNull VirtualFileEvent event) {
@@ -52,7 +52,7 @@ public class FileChangeListener implements VirtualFileListener {
     }
 
     // 获取变更的文件路径
-    public List<Path> getChangedFilePath() {
+    public static List<Path> getChangedFilePath() {
         return new ArrayList<>(changedFilePath); // 返回已记录路径的副本
     }
 }

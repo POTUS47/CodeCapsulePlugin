@@ -15,18 +15,33 @@ public class StartUp extends AnAction {
     private static String projectRootPath;
     public static Timer timer;
 
-    public StartUp() {
-        timer = new Timer(); // 在构造函数中初始化计时器
+//    public StartUp() {
+//
+//        // 在构造函数中初始化计时器
+//        timer = new Timer();
+//
+//        // 创建并注册 FileChangeListener（暂时写在action里测试）
+//        FileChangeListener fileChangeListener = new FileChangeListener();
+//        VirtualFileManager.getInstance().addVirtualFileListener(fileChangeListener);
+//        System.out.println("FileChangeListener 已注册.");
+//    }
+
+    //静态初始化块 只会在类首次被加载时执行一次。
+    //这对于那些需要全局初始化的操作非常有用，比如设置全局监听器、初始化单例等。
+    //静态初始化块
+    //牛批
+    static {
+        // 在静态初始化块中初始化计时器
+        timer = new Timer();
+
+        // 创建并注册 FileChangeListener
+        FileChangeListener fileChangeListener = new FileChangeListener();
+        VirtualFileManager.getInstance().addVirtualFileListener(fileChangeListener);
+        System.out.println("FileChangeListener 已注册.");
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-
-        // 创建并注册 FileChangeListener（暂时写在action里测试）
-        FileChangeListener fileChangeListener = new FileChangeListener();
-        VirtualFileManager.getInstance().addVirtualFileListener(fileChangeListener);
-        System.out.println("FileChangeListener 已注册.");
-
         // 获取项目根目录
         Project project = e.getProject();
         if (project != null) {
@@ -47,9 +62,12 @@ public class StartUp extends AnAction {
     public static String getProjectRootPath() {
         return projectRootPath;
     }
+    public static Path getVersionHistoryPath() {
+        return Paths.get(projectRootPath, "VersionHistory");
+    }
 }
 
-
+////////////////////失败的尝试
 //package plugin.capsule;
 //
 //import com.intellij.openapi.application.ApplicationManager;
