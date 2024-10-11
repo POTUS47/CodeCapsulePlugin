@@ -1,31 +1,38 @@
 package plugin.capsule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+//使用说明：15s到达时，仅需调用此类的构造函数：checkVersionSave(List<Path> paths, String baseDir)
 public class CheckVersionSave {
 
     private static final String HASH_ALGORITHM = "SHA-256";
-
+    private  File currentVersionDir ;
     // 主方法：接收路径列表并检查是否需要保存为新版本
-    //baseDir是VersionHistory的Path
-    public boolean checkVersionSave(List<String> paths, String baseDir) throws IOException, NoSuchAlgorithmException {
+    //baseDir是VersionHistory的Path（包括VersionHistory）
+    public boolean checkVersionSave(List<Path> paths, String baseDir) throws IOException, NoSuchAlgorithmException {
         // 获取上一个版本的文件夹
         File lastVersionDir = getLastVersionDirectory(baseDir);
         if (lastVersionDir == null) {
             // 创建第一个版本的文件夹
-            File version1Dir = new File(baseDir, "Version1");
-            version1Dir.mkdirs();
+            File version1Dir = new File(baseDir, "Version1");//使用父目录和子路径名创建一个 File 对象,即在VersionHistory下创建Version1
+            version1Dir.mkdirs();//递归地创建所有必要的目录
             // 获取项目的根目录
-            File projectRootDir = new File(baseDir).getParentFile();  // 假设项目根目录在 baseDir 的上一级
+            File projectRootDir = new File(baseDir).getParentFile();  //项目根目录在 baseDir 的上级
             // 将项目文件拷贝到 Version1 文件夹
             copyDirectory(projectRootDir, version1Dir);
             // 生成项目结构并计算哈希值
@@ -37,29 +44,42 @@ public class CheckVersionSave {
             return true; // 初始版本已创建
         }
 
-
         // 读取上一个版本的JSON文件
-        File jsonFile = new File(lastVersionDir, "S.json");
-        ObjectMapper objectMapper = new ObjectMapper();
+        File jsonFile = new File(lastVersionDir, "Structure.json");
+        ObjectMapper objectMapper = new ObjectMapper();//将 jsonFile 中的 JSON 数据读取并转换为 ProjectStructure 对象
         ProjectStructure previousVersionStructure = objectMapper.readValue(jsonFile, ProjectStructure.class);
-
         // 创建当前版本的目录结构
-        ProjectStructure currentVersionStructure = new ProjectStructure(1);
-        currentVersionStructure.setVersion(previousVersionStructure.getVersion() + 1);
-
+        ProjectStructure currentVersionStructure = new ProjectStructure();
         // 先拷贝上个版本的对象到当前版本对象中
         copyPreviousVersionStructure(previousVersionStructure, currentVersionStructure);
-
+        // 在VersionHistory下创建相应版本的文件夹
+        String newVersionDirName = "Version" + currentVersionStructure.getVersion();
+        File changesDir = new File(baseDir, newVersionDirName);
+        if (!changesDir.exists()) {
+            changesDir.mkdir(); // 创建目录
+            this.currentVersionDir = changesDir;
+        }
         // 遍历文件路径列表，检查哈希值
         boolean hasChanges = false;
-        for (String filePath : paths) {
-            File file = new File(filePath);
-            hasChanges |= checkAndCompareFile(file, previousVersionStructure.getFiles(), currentVersionStructure.getFiles(), currentVersionStructure.getVersion());
+        for (Path filePath : paths) {
+            File file = filePath.toFile(); // 将 Path 转为 File
+            hasChanges |= checkAndCompareFile(file, currentVersionStructure.getFiles(), currentVersionStructure.getVersion());
         }
-
         // 如果有变化，保存当前版本的结构
         if (hasChanges) {
             saveCurrentVersionStructure(currentVersionStructure, baseDir);
+            // 创建描述文件
+            File descriptionFile = new File(changesDir, "version_info.txt");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(descriptionFile))) {
+                writer.write(newVersionDirName);  // 写版本名称
+                writer.newLine();
+                writer.write("无描述");  // 写描述
+                writer.newLine();
+                writer.write("创建时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
+            }
+        }else {
+            // 若没有变化，删除创建的 文件夹
+            changesDir.delete(); // 直接删除空文件夹
         }
 
         return hasChanges;
@@ -75,8 +95,8 @@ public class CheckVersionSave {
         if (versionDirs != null) {
             for (File dir : versionDirs) {
                 String dirName = dir.getName();
-                if (dirName.startsWith("VERSION")) {
-                    int version = Integer.parseInt(dirName.replace("VERSION", ""));
+                if (dirName.startsWith("Version")) {
+                    int version = Integer.parseInt(dirName.replace("Version", ""));
                     if (version > maxVersion) {
                         maxVersion = version;
                         lastVersionDir = dir;
@@ -87,46 +107,105 @@ public class CheckVersionSave {
         return lastVersionDir;
     }
 
-    // 递归检查文件或目录，比较哈希值并更新当前结构
-    private boolean checkAndCompareFile(File file, Map<String, FileNode> previousFiles, Map<String, FileNode> currentFiles, int currentVersion) throws NoSuchAlgorithmException, IOException {
-        String fileName = file.getName();
+    //核心函数：递归检查文件或目录，比较哈希值并更新当前结构
+    private boolean checkAndCompareFile(File file,Map<String, FileNode> currentFiles, int currentVersion) throws NoSuchAlgorithmException, IOException {
         boolean hasChanges = false;
-
         if (file.isDirectory()) {
-            FileNode previousDir = previousFiles.get(fileName);
-            FileNode currentDir = new FileNode("directory");
-            currentFiles.put(fileName, currentDir);
-
-            if (previousDir != null && "directory".equals(previousDir.getType())) {
-                for (File subFile : file.listFiles()) {
-                    hasChanges |= checkAndCompareFile(subFile, previousDir.getChildren(), currentDir.getChildren(), currentVersion);
-                }
-            } else {
-                hasChanges = true;
-                for (File subFile : file.listFiles()) {
-                    hasChanges |= checkAndCompareFile(subFile, new HashMap<>(), currentDir.getChildren(), currentVersion);
-                }
+            hasChanges=true;//有目录必定变
+            // 获取上一个版本中的目录节点
+            if( !findOrCreateCurrentDir(file, currentFiles)){
+                throw new IOException("Failed to create or find directory: " + file.getAbsolutePath());
             }
         } else {
-            String currentHash = calculateFileHash(file.getPath());
-            FileNode previousFile = previousFiles.get(fileName);
-            if (previousFile != null && "file".equals(previousFile.getType()) && previousFile.getHash().equals(currentHash)) {
-                currentFiles.put(fileName, new FileNode("file", currentHash, previousFile.getLastModifiedVersion()));
-            } else {
-                currentFiles.put(fileName, new FileNode("file", currentHash, currentVersion));
-                hasChanges = true;
-            }
+            hasChanges=findFileNodeInNestedDirs(file, currentFiles,currentVersion);
         }
-
         return hasChanges;
     }
 
-    // 计算文件的SHA-256哈希值
-    private String calculateFileHash(String filePath) throws NoSuchAlgorithmException, IOException {
-        MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
-        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-        byte[] hashBytes = digest.digest(fileBytes);
+    // 辅助函数：查找当前版本的目录节点（查找到就删除，查找不到就创建）
+    private boolean findOrCreateCurrentDir(File dir, Map<String, FileNode> currentFiles) {
+        String[] pathParts = dir.getPath().split(Pattern.quote(File.separator));  // 使用 Pattern.quote 来处理分隔符
+        Map<String, FileNode> currentLevel = currentFiles;
+        FileNode currentNode = null;
+        boolean isExist = true;
+        FileNode parentNode = null; // 用于追踪父节点
+        for (String part : pathParts) {
+            parentNode = currentNode;  // 更新到当前的父节点
+            currentNode = currentLevel.get(part);
+            if (currentNode == null || !"directory".equals(currentNode.getType())) {
+                currentNode = new FileNode("directory");  // 如果没有该目录或类型不正确，则创建新的目录节点
+                currentLevel.put(part, currentNode);
+                isExist = false;  // 表示本次操作是新建了该目录
+            }
+            currentLevel = currentNode.getChildren();  // 进入下一级目录
+        }
 
+        if (isExist && parentNode != null) {
+            // 如果该目录存在，说明本次操作是删除了该目录。需要删除该目录以及其所有子目录和文件
+            removeDirectory(currentNode, parentNode.getChildren(), dir.getName());
+        }
+        return true;
+    }
+
+    // 辅助函数：递归删除指定目录节点及其子节点
+    private void removeDirectory(FileNode currentNode, Map<String, FileNode> parentFiles, String dirName) {
+        if (currentNode.getChildren() != null && !currentNode.getChildren().isEmpty()) {
+            // 递归删除所有子节点
+            for (String childName : new HashMap<>(currentNode.getChildren()).keySet()) {
+                removeDirectory(currentNode.getChildren().get(childName), currentNode.getChildren(), childName);
+            }
+        }
+        // 从父节点的children中删除当前目录
+        parentFiles.remove(dirName);
+    }
+
+    // 辅助函数：在嵌套的目录中查找文件节点（并根据情况修改目录结构和保存文件）
+    private boolean findFileNodeInNestedDirs(File file, Map<String, FileNode> currentFiles, int currentVersion) throws IOException, NoSuchAlgorithmException {
+        String[] pathParts = file.getPath().split(Pattern.quote(File.separator));
+        Map<String, FileNode> currentLevel = currentFiles;
+        boolean isChanged = false;
+        for (int i = 0; i < pathParts.length - 1; i++) {  // 不包括最后一个部分（文件本身）
+            FileNode node = currentLevel.get(pathParts[i]);
+            if (node == null || !"directory".equals(node.getType())) {
+                throw new IOException("Failed to find directory: " + file.getAbsolutePath()); // 如果找不到目录节点，或者类型不匹配
+            }
+            currentLevel = node.getChildren();  // 进入下一级目录
+        }
+        String fileName = pathParts[pathParts.length - 1];
+        FileNode fileNode = currentLevel.get(fileName);
+        // 判断文件是否存在
+        if (!file.exists()) {
+            // 文件不存在，说明被删除，从当前层的Map中移除该文件节点
+            if (fileNode != null) {
+                currentLevel.remove(fileName);  // 文件删除时从结构中移除
+            }
+            return true;
+        }
+        // 计算文件哈希值
+        String currentHash = calculateFileHash(file.toPath());
+        if (fileNode == null||!"file".equals(fileNode.getType())) {
+            // 文件新增情况
+            FileNode newFileNode = new FileNode("file", currentHash, currentVersion);  // 创建新的文件节点
+            currentLevel.put(fileName, newFileNode);  // 插入到当前层级的Map中
+            isChanged = true;
+            //保存文件：
+            saveFileToVersion(file,this.currentVersionDir);
+        } else if (!fileNode.getHash().equals(currentHash)) {
+            // 文件存在且哈希值不同，说明文件内容被修改
+            fileNode.setHash(currentHash);  // 更新哈希值
+            fileNode.setLastModifiedVersion(currentVersion);  // 更新最后修改版本号
+            isChanged = true;
+            //保存文件：
+            saveFileToVersion(file,this.currentVersionDir);
+        }
+        return isChanged;
+    }
+
+    // 计算文件的SHA-256哈希值
+    private String calculateFileHash(Path filePath) throws NoSuchAlgorithmException, IOException {
+        MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
+        byte[] fileBytes = Files.readAllBytes(filePath); // 使用 Path 直接读取文件
+        byte[] hashBytes = digest.digest(fileBytes);
         StringBuilder sb = new StringBuilder();
         for (byte b : hashBytes) {
             sb.append(String.format("%02x", b));
@@ -140,33 +219,77 @@ public class CheckVersionSave {
         currentVersion.setVersion(previousVersion.getVersion() + 1);
     }
 
-    // 递归生成项目目录结构
+    //仅用于Version1：递归生成项目目录结构
     private void generateProjectStructure(File file, ProjectStructure structure, int currentVersion) throws IOException, NoSuchAlgorithmException {
         if (file.isDirectory()) {
+            if ("VersionHistory".equals(file.getName())) {
+                return;                // 排除名为 "VersionHistory" 的文件夹
+            }
             FileNode dirNode = new FileNode("directory");
-            structure.getFiles().put(file.getName(), dirNode);
-
+            structure.getFiles().put(file.getName(), dirNode);//将当前目录的 FileNode 对象添加到 ProjectStructure 的 files 映射中，键为目录的名称。
             for (File subFile : file.listFiles()) {
+                //file.listFiles() 返回一个 File 数组，包含当前目录下的所有文件和子目录。
+                //subFile表示某个子文件或子目录
                 generateProjectStructure(subFile, structure, currentVersion);
             }
         } else {
-            String fileHash = calculateFileHash(file.getPath());
+            Path filePath = file.toPath(); // 使用 Path 替代 String
+            String fileHash = calculateFileHash(filePath);
             structure.getFiles().put(file.getName(), new FileNode("file", fileHash, currentVersion));
         }
     }
 
     // 保存当前版本的目录结构
     private void saveCurrentVersionStructure(ProjectStructure currentStructure, String baseDir) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String newVersionDirName = "VERSION" + currentStructure.getVersion();
+        ObjectMapper objectMapper = new ObjectMapper();//ObjectMapper 是 Jackson 库中的一个类，用于将 Java 对象转换为 JSON 格式
+        // 首先，创建Version专属的文件夹
+        String newVersionDirName = "Version" + currentStructure.getVersion();
         File newVersionDir = new File(baseDir, newVersionDirName);
         if (!newVersionDir.exists()) {
-            newVersionDir.mkdir();
+            newVersionDir.mkdir();//只有第一个版本会进入此分支
         }
-
         // 保存新的JSON文件
-        File jsonFile = new File(newVersionDir, "S.json");
-        objectMapper.writeValue(jsonFile, currentStructure);
+        File jsonFile = new File(newVersionDir, "Structure.json");//创建一个表示 JSON 文件的 File 对象
+        objectMapper.writeValue(jsonFile, currentStructure);//转换为 JSON 格式，并将结果写入 jsonFile
+    }
+
+    //需改成ply接口：仅用于创建Version1:把指定目录下的文件，全部拷贝到目标目录中（排除VersionHistory）
+    public void copyDirectory(File sourceDir, File targetDir) throws IOException {
+        if (!targetDir.exists()) {
+            targetDir.mkdirs(); // 创建目标文件夹
+        }
+        // 遍历源目录的所有文件和文件夹
+        File[] files = sourceDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if ("VersionHistory".equals(file.getName())) {
+                    continue;                // 排除名为 "VersionHistory" 的文件夹
+                }
+                File targetFile = new File(targetDir, file.getName());
+                if (file.isDirectory()) {
+                    // 如果是目录，递归调用复制
+                    copyDirectory(file, targetFile);
+                } else {
+                    // 如果是文件，直接复制
+                    Files.copy(file.toPath(), targetFile.toPath());
+                }
+            }
+        }
+    }
+
+    //需改成ply接口：
+    private void saveFileToVersion(File file, File versionDir) throws IOException {
+        File targetFile = new File(versionDir, file.getName());
+
+        if (file.isDirectory()) {
+            // 如果是目录，创建目录
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
+            }
+        } else {
+            // 如果是文件，复制文件到目标目录
+            Files.copy(file.toPath(), targetFile.toPath());
+        }
     }
 }
 
