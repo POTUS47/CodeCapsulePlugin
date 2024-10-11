@@ -23,9 +23,16 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
+    <projectListeners>
+        <listener
+                class="plugin.capsule.ProjectListener"
+                topic="com.intellij.openapi.project.ProjectManagerListener">
+        </listener>
+    </projectListeners>
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+<!--        <applicationService serviceImplementation="plugin.capsule.StartUp" />-->
 
     </extensions>
     <actions>
@@ -34,6 +41,9 @@
         </group>
         <action id="SaveFileId" class="plugin.capsule.SaveDocs" text="SaveFile" description="SaveFile">
             <add-to-group group-id="MyTools" anchor="first"/>
+        </action>
+        <action id="StartUpId" class="plugin.capsule.StartUp" text="StartUp" description="StartUp">
+            <add-to-group group-id="MyTools" />
         </action>
     </actions>
 </idea-plugin>
