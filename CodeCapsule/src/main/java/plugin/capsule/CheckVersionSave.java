@@ -304,6 +304,9 @@ public class CheckVersionSave {
             // 遍历当前目录中的所有文件和子目录
             for (File file : directory.listFiles()) {
                 if (file.isDirectory()) {
+                    if ("VersionHistory".equals(file.getName())) {
+                        continue; // 跳过对VersionHistory文件夹的处理
+                    }
                     // 创建子目录的 FileNode
                     FileNode dirNode = new FileNode("directory");
                     currentFiles.put(file.getName(), dirNode); // 将子目录添加到当前级别的映射中

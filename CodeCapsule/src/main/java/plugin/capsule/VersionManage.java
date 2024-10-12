@@ -154,7 +154,7 @@ public class VersionManage {
         //在TEMP中重建整个项目
         rebuildProjectStructure(versionStructure, tempDir);
     }
-    
+
     // 重建项目文件结构
     public static void rebuildProjectStructure(ProjectStructure versionStructure, File tempDir) throws IOException {
         // 遍历项目结构中的文件
