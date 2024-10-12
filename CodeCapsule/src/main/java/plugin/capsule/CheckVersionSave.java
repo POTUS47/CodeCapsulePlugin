@@ -59,23 +59,10 @@ public class CheckVersionSave {
         }
         System.out.println("已经有版本一，开始读取上个版本的json！");/////////////////////////////
         // 读取上一个版本的JSON文件
-       File jsonFile = new File(lastVersionDir, "Structure.json");
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(jsonFile);
-        // 手动解析 rootNode 构建 ProjectStructure 对象
+        File jsonFile = new File(lastVersionDir, "Structure.json");
         ProjectStructure previousVersionStructure = new ProjectStructure();
-        previousVersionStructure.setVersion(rootNode.get("version").asInt());
-        Map<String, FileNode> fileMap = new HashMap<>();
-        JsonNode filesNode = rootNode.get("files");
-        if (filesNode != null && filesNode.isObject()) {
-            filesNode.fields().forEachRemaining(entry -> {
-                String fileName = entry.getKey();
-                JsonNode fileNode = entry.getValue();
-                FileNode node = parseFileNode(fileNode); // 实现一个递归解析方法
-                fileMap.put(fileName, node);
-            });
-        }
-        previousVersionStructure.setFiles(fileMap);
+        // 手动解析 rootNode 构建 ProjectStructure 对象
+        JsonConvertToProjectStructure(jsonFile,previousVersionStructure);
         System.out.println("Parsed ProjectStructure: " + previousVersionStructure);
         // 创建当前版本的目录结构
         ProjectStructure currentVersionStructure = new ProjectStructure();
@@ -129,6 +116,26 @@ public class CheckVersionSave {
         }
 
         return hasChanges;
+    }
+
+    // 解析json文件的接口:需要传入json文件，一个空白的ProjectStructure（调用无参的构造函数创建一个即可）
+    public static void JsonConvertToProjectStructure(File jsonFile,ProjectStructure Structure)throws IOException{
+        // 读取上一个版本的JSON文件
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(jsonFile);
+        // 手动解析 rootNode 构建 ProjectStructure 对象
+        Structure.setVersion(rootNode.get("version").asInt());
+        Map<String, FileNode> fileMap = new HashMap<>();
+        JsonNode filesNode = rootNode.get("files");
+        if (filesNode != null && filesNode.isObject()) {
+            filesNode.fields().forEachRemaining(entry -> {
+                String fileName = entry.getKey();
+                JsonNode fileNode = entry.getValue();
+                FileNode node = parseFileNode(fileNode); // 实现一个递归解析方法
+                fileMap.put(fileName, node);
+            });
+        }
+        Structure.setFiles(fileMap);
     }
 
     // 获取最新的版本目录
@@ -326,7 +333,7 @@ public class CheckVersionSave {
     }
 
     //递归解析每个 FileNode，同时可以限制递归的深度
-    private FileNode parseFileNode(JsonNode fileNode) {
+    private static FileNode parseFileNode(JsonNode fileNode) {
         String type = fileNode.get("type").asText();
         String hash = fileNode.has("hash") ? fileNode.get("hash").asText() : null;
         int lastModifiedVersion = fileNode.get("lastModifiedVersion").asInt();
@@ -367,6 +374,7 @@ public class CheckVersionSave {
                     copyDirectory(file, targetFile);
                 } else {
                     // 如果是文件，直接复制
+                    //CompressDocs.CompressDocs(file.toPath().toString(),targetFile.getName());
                     Files.copy(file.toPath(), targetFile.toPath());
                 }
             }
