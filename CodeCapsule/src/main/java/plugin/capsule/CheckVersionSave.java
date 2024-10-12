@@ -25,9 +25,11 @@ public class CheckVersionSave {
     // 主方法：接收路径列表并检查是否需要保存为新版本(需修改：V1的txt创建，json识别失败)
     //baseDir是VersionHistory的Path（包括VersionHistory）
     public boolean checkVersionSave(List<Path> paths, String baseDir) throws IOException, NoSuchAlgorithmException {
+        System.out.println("Checking version save file");
         // 获取上一个版本的文件夹
         File lastVersionDir = getLastVersionDirectory(baseDir);
         if (lastVersionDir == null) {
+            System.out.println("wwwwwwww");/////////////////////////////
             // 创建第一个版本的文件夹
             File version1Dir = new File(baseDir, "Version1");//使用父目录和子路径名创建一个 File 对象,即在VersionHistory下创建Version1
             version1Dir.mkdirs();//递归地创建所有必要的目录
@@ -52,17 +54,19 @@ public class CheckVersionSave {
             System.out.println("Version1 created and project files copied successfully.");
             return true; // 初始版本已创建
         }
-
+        System.out.println("hhhhhhh");/////////////////////////////
         // 读取上一个版本的JSON文件
         File jsonFile = new File(lastVersionDir, "Structure.json");
         ObjectMapper objectMapper = new ObjectMapper();//将 jsonFile 中的 JSON 数据读取并转换为 ProjectStructure 对象
         ProjectStructure previousVersionStructure = objectMapper.readValue(jsonFile, ProjectStructure.class);
+        System.out.println("xxxxxxxxxxxxxx");/////////////////////////////
         // 创建当前版本的目录结构
         ProjectStructure currentVersionStructure = new ProjectStructure();
         // 先拷贝上个版本的对象到当前版本对象中
         copyPreviousVersionStructure(previousVersionStructure, currentVersionStructure);
         // 在VersionHistory下创建相应版本的文件夹
         String newVersionDirName = "Version" + currentVersionStructure.getVersion();
+        System.out.println(newVersionDirName);/////////////////////////////
         File changesDir = new File(baseDir, newVersionDirName);
         if (!changesDir.exists()) {
             changesDir.mkdir(); // 创建目录
@@ -76,6 +80,7 @@ public class CheckVersionSave {
         }
         // 如果有变化，保存当前版本的结构
         if (hasChanges) {
+            System.out.println(" save file");///////////////////////////
             saveCurrentVersionStructure(currentVersionStructure, baseDir);
             // 创建描述文件
             File descriptionFile = new File(changesDir, "version_info.txt");
