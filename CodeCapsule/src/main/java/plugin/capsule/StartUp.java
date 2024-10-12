@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 
 public class StartUp extends AnAction {
 
@@ -38,6 +40,21 @@ public class StartUp extends AnAction {
         FileChangeListener fileChangeListener = new FileChangeListener();
         VirtualFileManager.getInstance().addVirtualFileListener(fileChangeListener);
         System.out.println("FileChangeListener 已注册.");
+
+//        // 获取项目根目录
+//        projectRootPath=getProjectRootPath();
+//        if (projectRootPath != null) {
+//            System.out.println("项目根目录: " + projectRootPath);
+//        }
+//
+//        // 创建VersionHistory文件夹
+//        Path versionHistoryDir = Paths.get(projectRootPath, "VersionHistory");
+//        try {
+//            Files.createDirectories(versionHistoryDir); // 创建目录，如果不存在
+//            System.out.println("VersionHistory 目录创建成功: " + versionHistoryDir);
+//        } catch (IOException ex) {
+//            System.err.println("无法创建 VersionHistory 目录: " + ex.getMessage());
+//        }
     }
 
     @Override
@@ -46,6 +63,8 @@ public class StartUp extends AnAction {
         Project project = e.getProject();
         if (project != null) {
             projectRootPath = project.getBasePath();
+        }
+        if (projectRootPath != null) {
             System.out.println("项目根目录: " + projectRootPath);
         }
 
@@ -59,11 +78,26 @@ public class StartUp extends AnAction {
         }
     }
     // 静态方法获取项目根路径
-    public static String getProjectRootPath() {
-        return projectRootPath;
+    public static Path getProjectRootPath() {
+        if (projectRootPath != null) {
+            return Path.of(projectRootPath);  // 将 String 转换为 Path
+        }
+        return null;
     }
     public static Path getVersionHistoryPath() {
         return Paths.get(projectRootPath, "VersionHistory");
+    }
+    private static String getCurrentProjectPath() {
+        // 获取当前打开的项目
+        Project[] projects = ProjectManager.getInstance().getOpenProjects();
+        if (projects.length > 0) {
+            Project currentProject = projects[0]; // 取得第一个打开的项目
+            String projectBasePath = currentProject.getBasePath();  // 获取项目的路径字符串
+            if (projectBasePath != null) {
+                return projectBasePath;  // 将 String 转为 Path
+            }
+        }
+        return null;
     }
 }
 

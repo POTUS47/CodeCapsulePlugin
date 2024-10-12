@@ -24,12 +24,12 @@
     <depends>com.intellij.modules.platform</depends>
 
 
-    <projectListeners>
-        <listener
-                class="plugin.capsule.CloseDown"
-                topic="com.intellij.openapi.project.ProjectManagerListener">
-        </listener>
-    </projectListeners>
+<!--    <projectListeners>-->
+<!--        <listener-->
+<!--                class="plugin.capsule.CloseDown"-->
+<!--                topic="com.intellij.openapi.project.ProjectManagerListener">-->
+<!--        </listener>-->
+<!--    </projectListeners>-->
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
