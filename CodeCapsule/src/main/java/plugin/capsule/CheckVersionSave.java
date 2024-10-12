@@ -22,7 +22,7 @@ public class CheckVersionSave {
 
     private static final String HASH_ALGORITHM = "SHA-256";
     private  File currentVersionDir ;
-    // 主方法：接收路径列表并检查是否需要保存为新版本
+    // 主方法：接收路径列表并检查是否需要保存为新版本(需修改：V1的txt创建，json识别失败)
     //baseDir是VersionHistory的Path（包括VersionHistory）
     public boolean checkVersionSave(List<Path> paths, String baseDir) throws IOException, NoSuchAlgorithmException {
         // 获取上一个版本的文件夹
@@ -40,6 +40,15 @@ public class CheckVersionSave {
             generateProjectStructure(projectRootDir, initialStructure, 1); // 生成项目结构
             // 保存当前版本结构为 JSON 文件
             saveCurrentVersionStructure(initialStructure, baseDir);
+            //创建描述文件
+            File descriptionFile = new File(version1Dir, "version_info.txt");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(descriptionFile))) {
+                writer.write("Version1");  // 写版本名称
+                writer.newLine();
+                writer.write("无描述");  // 写描述
+                writer.newLine();
+                writer.write("创建时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
+            }
             System.out.println("Version1 created and project files copied successfully.");
             return true; // 初始版本已创建
         }
