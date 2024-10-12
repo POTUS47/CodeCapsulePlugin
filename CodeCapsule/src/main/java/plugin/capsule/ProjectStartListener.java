@@ -7,14 +7,14 @@ import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+//该类用于在项目启动时实例化启动类StartUp
+//区分项目启动和IntelliJ IDEA启动
+public class ProjectStartListener  implements ProjectActivity {
 
-public class StartProject implements ProjectActivity {
     private final StartUp startUp;
 
     // 构造函数，在项目启动时实例化 StartUp 单例
-    public StartProject() {
+    public ProjectStartListener() {
         // 通过单例模式获取 StartUp 的唯一实例
         this.startUp = StartUp.getInstance();
     }

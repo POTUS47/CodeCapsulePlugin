@@ -24,17 +24,15 @@
     <depends>com.intellij.modules.platform</depends>
 
 
-<!--    <projectListeners>-->
-<!--        <listener-->
-<!--                class="plugin.capsule.CloseDown"-->
-<!--                topic="com.intellij.openapi.project.ProjectManagerListener">-->
-<!--        </listener>-->
-<!--    </projectListeners>-->
+    <applicationListeners>
+        <listener class="plugin.capsule.ProjectCloseListener" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="plugin.capsule.IdeaCloseListener" topic="com.intellij.ide.AppLifecycleListener" />
+    </applicationListeners>
+
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-<!--        <projectManagerListener implementation="plugin.capsule.MyProjectCloseListener"/>-->
-        <postStartupActivity implementation="plugin.capsule.StartProject"/>
+        <postStartupActivity implementation="plugin.capsule.ProjectStartListener"/>
     </extensions>
     <actions>
         <group text="MyTools" id="MyTools">
