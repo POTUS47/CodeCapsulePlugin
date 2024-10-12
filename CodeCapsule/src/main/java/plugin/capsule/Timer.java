@@ -27,7 +27,7 @@ public class Timer {
             System.out.println("当前时间：" + currentTime + "秒");
 
             // 当计时器达到15秒时，执行回调函数
-            if (currentTime == 5) {
+            if (currentTime == 5) {////////////////
                 System.out.println("到达15s");
                 try {
                     onTimeReached15();

@@ -31,6 +31,16 @@ public class ProjectStructure {
     public void setFiles(Map<String, FileNode> files) {
         this.files = files;
     }
+
+    //方便检查JSON文件的提取：
+    @Override
+    public String toString() {
+        return "ProjectStructure{" +
+                "version=" + version +
+                ", files=" + files +
+                '}';
+    }
+
 }
 
 // 文件或目录节点类
