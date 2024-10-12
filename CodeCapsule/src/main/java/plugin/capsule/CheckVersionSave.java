@@ -164,6 +164,9 @@ public class CheckVersionSave {
     private boolean checkAndCompareFile(File file,Path filePath,Map<String, FileNode> currentFiles, int currentVersion) throws NoSuchAlgorithmException, IOException {
         boolean hasChanges = false;
         if (file.isDirectory()) {
+            if ("VersionHistory".equals(file.getName())) {
+                return false; // 直接返回，跳过当前文件夹的处理
+            }
             System.out.println("要检查的是目录！");///////////////////////////
             hasChanges=true;//有目录必定变
             // 获取上一个版本中的目录节点
