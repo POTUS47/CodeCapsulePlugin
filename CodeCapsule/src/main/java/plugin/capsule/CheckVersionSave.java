@@ -98,7 +98,14 @@ public class CheckVersionSave {
         boolean hasChanges = false;
         for (Path filePath : paths) {
             System.out.println("正在检测："+filePath);///////////////////////////
-            File file = filePath.toFile(); // 将 Path 转为 File
+            Path projectRootPath = StartUp.getProjectRootPath();
+            if (projectRootPath == null) {
+                throw new IllegalStateException("项目根路径未设置");
+            }
+            Path absolutePath = projectRootPath.resolve(filePath).normalize();// 将相对路径转换为绝对路径
+            System.out.println("转换成的绝对路径："+absolutePath);///////////////////////////
+            File file = absolutePath.toFile();// 将 Path 转为 File
+
             hasChanges |= checkAndCompareFile(file, currentVersionStructure.getFiles(), currentVersionStructure.getVersion());
             System.out.println("检测完毕："+filePath+"当前结果为"+hasChanges);///////////////////////////
         }
