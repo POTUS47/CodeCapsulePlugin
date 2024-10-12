@@ -7,9 +7,7 @@ import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+//该类用于在项目启动时实例化启动类StartUp
 public class StartProject implements ProjectActivity {
     private final StartUp startUp;
 

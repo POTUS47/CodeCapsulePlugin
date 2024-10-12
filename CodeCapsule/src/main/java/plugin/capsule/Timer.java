@@ -43,7 +43,7 @@ public class Timer {
     private void onTimeReached15() throws IOException, NoSuchAlgorithmException {
         System.out.println("15s操作");
         Path baseDir=StartUp.getVersionHistoryPath();
-        System.out.println("kanale");
+        System.out.println("baseDir"+baseDir);
         List<Path>paths=FileChangeListener.getChangedFilePath();
         System.out.println("开始检查是否需要保存");
 
@@ -59,9 +59,10 @@ public class Timer {
         check.checkVersionSave(paths, baseDir.toString());
     }
 
-    public void resetTimer() {
+    public void resetTimer0() {
         currentTime = 0; // 重置时间为16秒
-        // 如果需要重新开始计时器，可以在这里调用startTimer()
+
     }
+
 
 }
