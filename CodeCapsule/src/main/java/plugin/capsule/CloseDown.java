@@ -23,3 +23,17 @@
 //        System.out.println("Project closed");
 //    }
 //}
+
+//package plugin.capsule;
+//
+//import com.intellij.openapi.project.Project;
+//import com.intellij.openapi.project.ProjectManagerListener;
+//import org.jetbrains.annotations.NotNull;
+//
+//public class CloseDown implements ProjectManagerListener {
+//
+//    @Override
+//    public void projectClosing(@NotNull Project project) {
+//        System.out.println("项目关闭");
+//    }
+//}
