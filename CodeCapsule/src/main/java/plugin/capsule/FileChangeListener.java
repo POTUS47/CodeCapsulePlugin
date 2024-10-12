@@ -77,7 +77,6 @@ public class FileChangeListener implements VirtualFileListener {
             System.out.println("不在 src 文件夹中，忽略: " + filePath);
         }
 
-
     }
 
     // 获取变更的文件路径

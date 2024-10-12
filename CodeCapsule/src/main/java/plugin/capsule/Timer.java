@@ -9,6 +9,8 @@ import java.nio.file.Path;
 
 import java.util.List;
 
+
+//只有StartUp中实例化了Timer
 public class Timer {
 
     private final ScheduledExecutorService scheduler;
@@ -40,8 +42,8 @@ public class Timer {
         }, 0, 1, TimeUnit.SECONDS);
     }
 
-    private void onTimeReached15() throws IOException, NoSuchAlgorithmException {
-        System.out.println("15s操作");
+    //对外暴露，当项目关闭或IDEA关闭时可手动触发15s的效果
+    public void onTimeReached15() throws IOException, NoSuchAlgorithmException {
         Path baseDir=StartUp.getVersionHistoryPath();
         System.out.println("baseDir"+baseDir);
         List<Path>paths=FileChangeListener.getChangedFilePath();
