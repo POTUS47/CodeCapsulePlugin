@@ -43,13 +43,51 @@ public class FileChangeListener implements VirtualFileListener {
         dealChange(event);
     }
 
-    private void dealChange(@NotNull VirtualFileEvent event){
+//    private void dealChange(@NotNull VirtualFileEvent event){
+//        // 获取项目
+//        Project[] projects = ProjectManager.getInstance().getOpenProjects();
+//        if (projects.length == 0) {
+//            System.err.println("没有打开的项目.");
+//            return;
+//        }
+//        // 取得第一个打开的项目
+//        Project currentProject = projects[0];
+//        String projectPath = currentProject.getBasePath();
+//        if (projectPath == null) {
+//            System.err.println("项目路径未初始化.");
+//            return;
+//        }
+//        // 构造 src 文件夹的目标路径
+//        Path srcFolderPath = Paths.get(projectPath, "src");
+//        System.out.println(srcFolderPath);
+//        // 获取变更文件路径
+//        VirtualFile file = event.getFile();
+//        Path filePath = Paths.get(file.getPath());
+//
+////        Path srcFolderPath = targetPath.resolve("src");
+//
+//        // 判断该文件是否在 src 文件夹中
+//        if (srcFolderPath!=null){
+//            if (filePath.startsWith(srcFolderPath)) {
+//                //防止重复
+//                if (!changedFilePath.contains(filePath)) {
+//                    changedFilePath.add(filePath);
+//                    System.out.println("文件记录: " + filePath);
+//                }
+//            } else {
+//                System.out.println("不在 src 文件夹中，忽略: " + filePath);
+//            }
+//        }
+//        StartUp.timer.resetTimer();
+//    }
+    private void dealChange(@NotNull VirtualFileEvent event) {
         // 获取项目
         Project[] projects = ProjectManager.getInstance().getOpenProjects();
         if (projects.length == 0) {
             System.err.println("没有打开的项目.");
             return;
         }
+
         // 取得第一个打开的项目
         Project currentProject = projects[0];
         String projectPath = currentProject.getBasePath();
@@ -57,29 +95,34 @@ public class FileChangeListener implements VirtualFileListener {
             System.err.println("项目路径未初始化.");
             return;
         }
+
         // 构造 src 文件夹的目标路径
         Path srcFolderPath = Paths.get(projectPath, "src");
-        System.out.println(srcFolderPath);
+        System.out.println("src 文件夹路径: " + srcFolderPath);
+
         // 获取变更文件路径
         VirtualFile file = event.getFile();
         Path filePath = Paths.get(file.getPath());
 
-//        Path srcFolderPath = targetPath.resolve("src");
-
         // 判断该文件是否在 src 文件夹中
-        if (srcFolderPath!=null){
-            if (filePath.startsWith(srcFolderPath)) {
-                //防止重复
-                if (!changedFilePath.contains(filePath)) {
-                    changedFilePath.add(filePath);
-                    System.out.println("文件记录: " + filePath);
-                }
-            } else {
-                System.out.println("不在 src 文件夹中，忽略: " + filePath);
+        if (filePath.startsWith(srcFolderPath)) {
+            System.out.println("srcFolderPath " + srcFolderPath);
+            System.out.println("filePath " + filePath);
+            // 获取从 src 开始的相对路径
+            Path relativePath = Paths.get(projectPath).relativize(filePath);
+
+            // 防止重复
+            if (!changedFilePath.contains(relativePath)) {
+                changedFilePath.add(relativePath);
+                System.out.println("文件记录: " + relativePath);
             }
+        } else {
+            System.out.println("不在 src 文件夹中，忽略: " + filePath);
         }
+
         StartUp.timer.resetTimer();
     }
+
     // 获取变更的文件路径
     public static List<Path> getChangedFilePath() {
         return new ArrayList<>(changedFilePath); // 返回已记录路径的副本

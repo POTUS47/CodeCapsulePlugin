@@ -1,0 +1,14 @@
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\CheckVersionSave.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\CloseDown.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\CompressDocs.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\FileChangeListener.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\LoadDocsCompressed.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\ProjectListener.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\ProjectStructure.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\SaveDocs.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\SnapShot.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\StartProject.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\StartUp.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\java\plugin\capsule\Timer.java
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\resources\META-INF\plugin.xml
+C:\Users\10510\Desktop\CodeCapsulePlugin\CodeCapsule\src\main\resources\META-INF\pluginIcon.svg

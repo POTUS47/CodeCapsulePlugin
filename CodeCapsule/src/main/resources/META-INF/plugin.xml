@@ -34,6 +34,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
 <!--        <projectManagerListener implementation="plugin.capsule.MyProjectCloseListener"/>-->
+        <postStartupActivity implementation="plugin.capsule.StartProject"/>
     </extensions>
     <actions>
         <group text="MyTools" id="MyTools">
@@ -42,8 +43,8 @@
         <action id="SaveFileId" class="plugin.capsule.SaveDocs" text="SaveFile" description="SaveFile">
             <add-to-group group-id="MyTools" anchor="first"/>
         </action>
-        <action id="StartUpId" class="plugin.capsule.StartUp" text="StartUp" description="StartUp">
-            <add-to-group group-id="MyTools" />
-        </action>
+<!--        <action id="StartUpId" class="plugin.capsule.StartUp" text="StartUp" description="StartUp">-->
+<!--            <add-to-group group-id="MyTools" />-->
+<!--        </action>-->
     </actions>
 </idea-plugin>
