@@ -250,9 +250,9 @@ public class VersionManage {
     //对外接口：回退到某个版本
     public static void revertVersion(String VersionName) throws IOException, NoSuchAlgorithmException {
         CheckOneVersion(VersionName);
-        //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
+/*        //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
         //比如C:\Users\10510\IdeaProjects\trytry
-/*        Path projectPath=StartUp.getProjectRootPath();
+        Path projectPath=StartUp.getProjectRootPath();
         Path versionHistoryPath = null;
         if (projectPath != null) {
             //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
@@ -274,10 +274,11 @@ public class VersionManage {
 
         //开始报错
         CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());
+        check.checkVersionSave(paths, baseDir.toString());*/
     }
 
     // 辅助函数：删除当前项目中的重复文件
+/*
     private static void deleteDuplicateFiles(Path sourceDir, Path targetDir) throws IOException {
         if (Files.notExists(sourceDir)) {
             System.out.println("Temp 目录不存在.");
@@ -321,9 +322,10 @@ public class VersionManage {
                     }
         });
     }
+*/
 
     // 复制Temp目录中的文件到项目根目录
-    private static  void copyFiles(Path sourceDir, Path targetDir,List<Path> paths) throws IOException {
+/*    private static  void copyFiles(Path sourceDir, Path targetDir,List<Path> paths) throws IOException {
 
         Path projectPath = StartUp.getProjectRootPath();
         Path srcFolderPath = Paths.get(String.valueOf(projectPath), "src");
@@ -350,5 +352,5 @@ public class VersionManage {
                 System.err.println("复制文件出错: " + sourcePath + " - " + e.getMessage());
             }
         });
-    }
+    }*/
 }
