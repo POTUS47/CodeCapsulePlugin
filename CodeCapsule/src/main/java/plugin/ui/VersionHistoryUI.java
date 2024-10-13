@@ -31,11 +31,27 @@ import java.nio.file.Path;
 public final class VersionHistoryUI implements ToolWindowFactory {
     private Project project;
     private DirTree dirTree;
+    private JButton backButton;
+    private JLabel versionId;
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         this.project = project;
         dirTree= new DirTree(project);
+        versionId=new JLabel("Version ID");
+        // 添加返回按钮
+        backButton = new JButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 切换回版本面板
+                JPanel versionPanel = getVersionInfo(toolWindow);
+                toolWindow.getComponent().removeAll();
+                toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
+                toolWindow.getComponent().revalidate();
+                toolWindow.getComponent().repaint();
+            }
+        });
         // 显示版本列表的面板
         JPanel versionPanel = getVersionInfo(toolWindow);
 
@@ -155,42 +171,25 @@ public final class VersionHistoryUI implements ToolWindowFactory {
 
     // 切换到空面板，并添加返回按钮
     private void switchToEmptyPanel(String Id,ToolWindow toolWindow) throws IOException, ClassNotFoundException {
-        JPanel emptyPanel = new JPanel(new BorderLayout());
         VersionManage.CheckOneVersion(Id);
-        dirTree.loadDirectory("Version2");
-
-        // 添加返回按钮
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 切换回版本面板
-                JPanel versionPanel = getVersionInfo(toolWindow);
-                toolWindow.getComponent().removeAll();
-                toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
-                toolWindow.getComponent().revalidate();
-                toolWindow.getComponent().repaint();
-            }
-        });
-
-        JLabel versionId=new JLabel(Id);
+        versionId.setText(Id);
         // 将返回按钮放在左上角
         JPanel topPanel = new JPanel(new BorderLayout()); // 使用 BorderLayout
         topPanel.setBorder(new EmptyBorder(5, 15, 5, 10));
-
-// 创建并添加 versionId 到左侧
+        // 创建并添加 versionId 到左侧
         topPanel.add(versionId, BorderLayout.WEST); // 将 versionId 放在左边
-
-// 创建并添加 backButton 到右侧
+        // 创建并添加 backButton 到右侧
         topPanel.add(backButton, BorderLayout.EAST); // 将 backButton 放在右边
 
-        //emptyPanel.add(topPanel, BorderLayout.NORTH);
+        dirTree.loadDirectory("Version2");
         dirTree.add(topPanel, BorderLayout.NORTH);
 
+
         // 替换工具窗口的内容为空面板
-        toolWindow.getComponent().removeAll();
+       toolWindow.getComponent().removeAll();
         toolWindow.getComponent().add(dirTree, BorderLayout.CENTER);
-        toolWindow.getComponent().revalidate();
-        toolWindow.getComponent().repaint();
+//        toolWindow.getComponent().revalidate();
+//        toolWindow.getComponent().repaint();
+
     }
 }
