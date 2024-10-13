@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 public class CompressDocs {
 
-    public static void CompressDocs(String originalPath,String version, AnActionEvent e)  {
+    public static void CompressDocs(String originalPath,String version)  {
         // 转换文件路径为 URL 格式
         String urlPath = VirtualFileManager.constructUrl("file", originalPath);
 
@@ -45,7 +45,8 @@ public class CompressDocs {
             // 将 Snapshot 序列化为压缩后的二进制文件
             try {
                 // 定义保存的目录和文件名
-                String targetDirectory = e.getProject().getBasePath();  // 使用项目的根目录
+                //String targetDirectory = e.getProject().getBasePath();  // 使用项目的根目录
+                String targetDirectory=StartUp.getProjectRootPath().toString();
 
                 // 拼接路径
                 Path versionHistoryDir = Paths.get(targetDirectory, "VersionHistory", version);
