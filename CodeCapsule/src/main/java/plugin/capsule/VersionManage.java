@@ -23,7 +23,7 @@ import static com.jayway.jsonpath.Filter.filter;
 
 public class VersionManage {
     // 获取某个版本的名称
-    public static String getVersionName(String VersionName){
+    public static String getVersionName(String VersionName) {
         // 获取VersionName 对应的文件夹
         File targetVersionDir = findVersionFolder(VersionName);
         // 查找 version_info.txt 文件
@@ -32,11 +32,11 @@ public class VersionManage {
             System.out.println("未找到 version_info.txt 文件: " + versionInfoFile.getAbsolutePath());
             return null;
         }
-        return getLineFromTxt(versionInfoFile,1);//获取txt第一行内容
+        return getLineFromTxt(versionInfoFile, 1);//获取txt第一行内容
     }
 
     // 获取某个版本的描述
-    public static String getVersionDescription(String VersionName){
+    public static String getVersionDescription(String VersionName) {
         // 获取VersionName 对应的文件夹
         File targetVersionDir = findVersionFolder(VersionName);
         // 查找 version_info.txt 文件
@@ -45,7 +45,7 @@ public class VersionManage {
             System.out.println("未找到 version_info.txt 文件: " + versionInfoFile.getAbsolutePath());
             return null;
         }
-        return getLineFromTxt(versionInfoFile,2);//获取txt第一行内容
+        return getLineFromTxt(versionInfoFile, 2);//获取txt第一行内容
     }
 
     // 为某版本重命名
@@ -58,7 +58,7 @@ public class VersionManage {
             System.out.println("未找到 version_info.txt 文件: " + versionInfoFile.getAbsolutePath());
             return;
         }
-        modifyLineInTxt(versionInfoFile,1,newVersionName);//把txt第一行修改成新名字
+        modifyLineInTxt(versionInfoFile, 1, newVersionName);//把txt第一行修改成新名字
     }
 
     // 为某版本修改版本描述
@@ -71,11 +71,11 @@ public class VersionManage {
             System.out.println("未找到 version_info.txt 文件: " + versionInfoFile.getAbsolutePath());
             return;
         }
-        modifyLineInTxt(versionInfoFile,2,newDescription);//把txt第一行修改成新名字
+        modifyLineInTxt(versionInfoFile, 2, newDescription);//把txt第一行修改成新名字
     }
 
     // 辅助函数：用于寻找特定Version所在的文件夹（例如：传入“Version1”，返回Version1的文件夹）
-    private static File findVersionFolder(String VersionName){
+    private static File findVersionFolder(String VersionName) {
         // 获取版本历史的根目录路径
         String versionFolderPath = StartUp.getVersionHistoryPath().toString();
         File versionDir = new File(versionFolderPath);
@@ -145,21 +145,20 @@ public class VersionManage {
     }
 
     // 核心函数：把某个版本的全部文件全部整理到某个文件夹
-    public static void GetVersionAllFiles(String VersionName,File TargetDir) throws IOException {
+    public static void GetVersionAllFiles(String VersionName, File TargetDir) throws IOException {
         // 根据给定路径查找版本文件夹
-        File versionFolder=findVersionFolder(VersionName);
+        File versionFolder = findVersionFolder(VersionName);
         File jsonFile = new File(versionFolder, "Structure.json");//指向想读取的json文件
         ProjectStructure versionStructure = new ProjectStructure();//创建一个空白的ProjectStructure 对象
-        CheckVersionSave.JsonConvertToProjectStructure(jsonFile,versionStructure);//调用函数构建 ProjectStructure 对象
+        CheckVersionSave.JsonConvertToProjectStructure(jsonFile, versionStructure);//调用函数构建 ProjectStructure 对象
 
         if (!TargetDir.exists()) {
-            if( TargetDir.mkdir()) {
+            if (TargetDir.mkdir()) {
                 System.out.println("文件夹不存在，文件夹已创建: " + TargetDir.getAbsolutePath());
             } else {
                 throw new IOException("文件夹不存在，创建文件夹失败: " + TargetDir.getAbsolutePath());
             }
-        }
-        else{
+        } else {
             clearDirectory(TargetDir);//清空原文件夹里的内容
             System.out.println("原文件夹的内容已清空: " + TargetDir.getAbsolutePath());
         }
@@ -170,10 +169,10 @@ public class VersionManage {
     // 查看某个版本代码：把某个版本的全部文件整理到TEMP文件夹中
     public static void CheckOneVersion(String VersionName) throws IOException {
         // 根据给定路径查找版本文件夹
-        File versionFolder=findVersionFolder(VersionName);
+        File versionFolder = findVersionFolder(VersionName);
         // 在VersionHistory下创建名为Temp的文件夹
         File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
-        GetVersionAllFiles(VersionName,tempDir);
+        GetVersionAllFiles(VersionName, tempDir);
     }
 
     // 重建项目文件结构
@@ -248,107 +247,110 @@ public class VersionManage {
     }
 
     //对外接口：回退到某个版本
-    public static void revertVersion(String VersionName) throws IOException, NoSuchAlgorithmException {
+    public static void revertVersion (String VersionName) throws IOException, NoSuchAlgorithmException {
         CheckOneVersion(VersionName);
         //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
         //比如C:\Users\10510\IdeaProjects\trytry
-/*        Path projectPath=StartUp.getProjectRootPath();
-        Path versionHistoryPath = null;
-        if (projectPath != null) {
-            //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
-            versionHistoryPath = projectPath.resolve("VersionHistory").resolve("Temp");
-        }
-        // 创建一个List来存储所有新创建或更新的路径,(文件监听捕捉不到）
-        List<Path> paths = new ArrayList<>();
 
-        // 递归遍历Temp目录，删除项目中对应的文件
-        deleteDuplicateFiles(versionHistoryPath, projectPath);
-
-        // 将Temp目录中的内容复制到项目根目录
-        copyFiles(versionHistoryPath, projectPath,paths);
-        System.out.println("版本回退完成.");
-
-        //保存新版本
-        paths.forEach(System.out::println);
-        Path baseDir=StartUp.getVersionHistoryPath();
-
-        //开始报错
-        CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());
+//
+//        Path projectPath = StartUp.getProjectRootPath();
+//        Path versionHistoryPath = null;
+//        if (projectPath != null) {
+//            //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
+//            versionHistoryPath = projectPath.resolve("VersionHistory").resolve("Temp");
+//        }
+//        // 创建一个List来存储所有新创建或更新的路径,(文件监听捕捉不到）
+//        List<Path> paths = new ArrayList<>();
+//
+//        // 递归遍历Temp目录，删除项目中对应的文件
+//        deleteDuplicateFiles(versionHistoryPath, projectPath);
+//
+//        // 将Temp目录中的内容复制到项目根目录
+//        copyFiles(versionHistoryPath, projectPath, paths);
+//        System.out.println("版本回退完成.");
+//
+//        //保存新版本
+//        paths.forEach(System.out::println);
+//        Path baseDir = StartUp.getVersionHistoryPath();
+//
+//        //开始报错
+//        CheckVersionSave check = new CheckVersionSave();
+//        check.checkVersionSave(paths, baseDir.toString());
     }
 
-    // 辅助函数：删除当前项目中的重复文件
-    private static void deleteDuplicateFiles(Path sourceDir, Path targetDir) throws IOException {
-        if (Files.notExists(sourceDir)) {
-            System.out.println("Temp 目录不存在.");
-            return;
-        }
+//    // 辅助函数：删除当前项目中的重复文件
+//    private static void deleteDuplicateFiles (Path sourceDir, Path targetDir) throws IOException {
+//        if (Files.notExists(sourceDir)) {
+//            System.out.println("Temp 目录不存在.");
+//            return;
+//        }
+//
+//        // 遍历Temp文件夹
+//        Files.walk(sourceDir)
+//                .filter(path -> !path.equals(sourceDir))  // 忽略掉sourceDir自身
+//                .forEach(sourcePath -> {
+//                    try {
+//                        // sourceDir,比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
+//                        // 计算出相对于Temp目录的相对路径，比如/src(Temp内不包括VersionX)
+//                        Path relativePath = sourceDir.relativize(sourcePath);
+//                        // System.out.println("relativePath:"+relativePath);
+//
+//                        // 合并路径，比如C:\Users\10510\IdeaProjects\trytry\src
+//                        Path targetPath = targetDir.resolve(relativePath);
+//                        // System.out.println("targetPath:"+targetPath);
+//
+//                        // 如果targetPath存在且不是VersionHistory文件夹，删除它
+//                        if (Files.exists(targetPath) && !targetPath.startsWith(targetDir.resolve("VersionHistory"))) {
+//                            if (Files.isDirectory(targetPath)) {
+//                                Files.walk(targetPath)
+//                                        // 按照路径深度从深到浅进行排序，确保先删除文件和子目录，再删除父目录
+//                                        .sorted((path1, path2) -> Integer.compare(path2.getNameCount(), path1.getNameCount()))
+//                                        .forEach(path -> {
+//                                            try {
+//                                                Files.deleteIfExists(path);
+//                                            } catch (IOException e) {
+//                                                System.err.println("无法删除: " + path + " - " + e.getMessage());
+//                                            }
+//                                        });
+//                            } else {
+//                                Files.deleteIfExists(targetPath);
+//                            }
+//                            System.out.println("删除: " + targetPath);
+//                        }
+//                    } catch (IOException e) {
+//                        System.err.println("删除文件出错: " + sourcePath + " - " + e.getMessage());
+//                    }
+//                });
+//    }
+//
+//    // 复制Temp目录中的文件到项目根目录
+//    private static void copyFiles (Path sourceDir, Path targetDir, List < Path > paths) throws IOException {
+//
+//        Path projectPath = StartUp.getProjectRootPath();
+//        Path srcFolderPath = Paths.get(String.valueOf(projectPath), "src");
+//        Files.walk(sourceDir).forEach(sourcePath -> {
+//            try {
+//                // 计算相对路径以确定目标路径
+//                Path relativePath = sourceDir.relativize(sourcePath);
+//                Path targetPath = targetDir.resolve(relativePath);
+//
+//                // 创建目标目录（如果是目录）
+//                if (Files.isDirectory(sourcePath)) {
+//                    if (Files.notExists(targetPath)) {
+//                        Files.createDirectories(targetPath);
+//                    }
+//                } else {
+//                    // 如果是文件则复制到目标位置
+//                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+//                }
+//                System.out.println("复制: " + sourcePath + " 到 " + targetPath);
+//                Path path = Paths.get(srcFolderPath.toString()).relativize(targetPath);
+//                paths.add(path);
+//
+//            } catch (IOException e) {
+//                System.err.println("复制文件出错: " + sourcePath + " - " + e.getMessage());
+//            }
+//        });
+//    }
 
-        // 遍历Temp文件夹
-        Files.walk(sourceDir)
-                .filter(path -> !path.equals(sourceDir))  // 忽略掉sourceDir自身
-                .forEach(sourcePath -> {
-                    try {
-                        // sourceDir,比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
-                        // 计算出相对于Temp目录的相对路径，比如/src(Temp内不包括VersionX)
-                        Path relativePath = sourceDir.relativize(sourcePath);
-                        // System.out.println("relativePath:"+relativePath);
-
-                        // 合并路径，比如C:\Users\10510\IdeaProjects\trytry\src
-                        Path targetPath = targetDir.resolve(relativePath);
-                        // System.out.println("targetPath:"+targetPath);
-
-                        // 如果targetPath存在且不是VersionHistory文件夹，删除它
-                        if (Files.exists(targetPath) && !targetPath.startsWith(targetDir.resolve("VersionHistory"))) {
-                            if (Files.isDirectory(targetPath)) {
-                                Files.walk(targetPath)
-                                        // 按照路径深度从深到浅进行排序，确保先删除文件和子目录，再删除父目录
-                                        .sorted((path1, path2) -> Integer.compare(path2.getNameCount(), path1.getNameCount()))
-                                        .forEach(path -> {
-                                            try {
-                                                Files.deleteIfExists(path);
-                                            } catch (IOException e) {
-                                                System.err.println("无法删除: " + path + " - " + e.getMessage());
-                                            }
-                                        });
-                            } else {
-                                Files.deleteIfExists(targetPath);
-                            }
-                            System.out.println("删除: " + targetPath);
-                        }
-                    } catch (IOException e) {
-                        System.err.println("删除文件出错: " + sourcePath + " - " + e.getMessage());
-                    }
-        });
-    }
-
-    // 复制Temp目录中的文件到项目根目录
-    private static  void copyFiles(Path sourceDir, Path targetDir,List<Path> paths) throws IOException {
-
-        Path projectPath = StartUp.getProjectRootPath();
-        Path srcFolderPath = Paths.get(String.valueOf(projectPath), "src");
-        Files.walk(sourceDir).forEach(sourcePath -> {
-            try {
-                // 计算相对路径以确定目标路径
-                Path relativePath = sourceDir.relativize(sourcePath);
-                Path targetPath = targetDir.resolve(relativePath);
-
-                // 创建目标目录（如果是目录）
-                if (Files.isDirectory(sourcePath)) {
-                    if (Files.notExists(targetPath)) {
-                        Files.createDirectories(targetPath);
-                    }
-                } else {
-                    // 如果是文件则复制到目标位置
-                    Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                }
-                System.out.println("复制: " + sourcePath + " 到 " + targetPath);
-                Path path = Paths.get(srcFolderPath.toString()).relativize(targetPath);
-                paths.add(path);
-
-            } catch (IOException e) {
-                System.err.println("复制文件出错: " + sourcePath + " - " + e.getMessage());
-            }
-        });
-    }
 }
