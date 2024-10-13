@@ -340,7 +340,7 @@ public class CheckVersionSave {
         objectMapper.writeValue(jsonFile, currentStructure);//转换为 JSON 格式，并将结果写入 jsonFile
     }
 
-    //递归解析每个 FileNode，同时可以限制递归的深度
+    // 递归解析每个 FileNode，同时可以限制递归的深度
     private static FileNode parseFileNode(JsonNode fileNode) {
         String type = fileNode.get("type").asText();
         String hash = fileNode.has("hash") ? fileNode.get("hash").asText() : null;
@@ -391,7 +391,8 @@ public class CheckVersionSave {
                     copyDirectory(file, targetFile);
                 } else {
                     // 如果是文件，直接复制
-                    Files.copy(file.toPath(), targetFile.toPath());
+                    CompressDocs.CompressDocs(file.toPath().toString(),targetDir.getPath());
+                    //Files.copy(file.toPath(), targetFile.toPath());
                     //Files.copy(file.toPath(), targetDir.toPath().resolve(file.getName()));
                 }
             }
@@ -415,7 +416,8 @@ public class CheckVersionSave {
             // 如果是文件，先确保目标文件的父目录存在
             Files.createDirectories(targetFile.toPath().getParent());
             // 复制文件到目标目录
-            Files.copy(file.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            //Files.copy(file.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            CompressDocs.CompressDocs(file.toPath().toString(),versionDir.getPath());
         }
     }
 
