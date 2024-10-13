@@ -188,11 +188,9 @@ public class VersionManage {
         // 根据给定路径查找版本文件夹
         File versionFolder = findVersionFolder(VersionName);
         Path projectDir=StartUp.getProjectRootPath();
-
+        Path srcPath = projectDir.resolve("src");
         // 在VersionHistory下创建名为Temp的文件夹
-        File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
-        File srcDir = new File(tempDir, "src");
-        GetVersionAllFiles(VersionName, srcDir);
+        GetVersionAllFiles(VersionName, srcPath.toFile());
     }
 
 
