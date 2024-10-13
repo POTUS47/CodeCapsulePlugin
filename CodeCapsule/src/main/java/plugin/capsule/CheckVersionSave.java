@@ -35,7 +35,7 @@ public class CheckVersionSave {
             File version1Dir = new File(baseDir, "Version1");//使用父目录和子路径名创建一个 File 对象,即在VersionHistory下创建Version1
             version1Dir.mkdirs();//递归地创建所有必要的目录
             // 获取项目的根目录
-            File projectRootDir = new File(baseDir).getParentFile();  //项目根目录在 baseDir 的上级
+            File projectRootDir = new File(baseDir+"\\src").getParentFile();  //项目根目录在 baseDir 的上级
             System.out.println("获取到项目的根目录："+projectRootDir.getAbsolutePath());/////////////////////////////
             // 将项目文件拷贝到 Version1 文件夹
             copyDirectory(projectRootDir, version1Dir);
