@@ -67,7 +67,7 @@ public class SaveDocs extends AnAction {
 //            //String currentContent = editor.getDocument().getText();
 //
 //            DiffContent content1 = createContentFromString(snapshotContent);
-//            DiffContent content2 = createContentFromString(code2);888
+//            DiffContent content2 = createContentFromString(code2);
 //
 //            // 获取项目
 //        Project project = e.getProject();1
