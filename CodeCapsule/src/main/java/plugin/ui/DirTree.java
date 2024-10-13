@@ -11,6 +11,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 
+//调用前需自行保证所需版本已经到Temp里了
 
 //DirTree dirTree= new DirTree(project);
 //dirTree.loadDirectory("Version2");
