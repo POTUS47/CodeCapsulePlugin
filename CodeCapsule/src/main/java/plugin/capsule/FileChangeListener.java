@@ -83,4 +83,8 @@ public class FileChangeListener implements VirtualFileListener {
     public static List<Path> getChangedFilePath() {
         return new ArrayList<>(changedFilePath); // 返回已记录路径的副本
     }
+
+    public static void clearChangedFilePath(){
+        changedFilePath.clear();
+    }
 }
