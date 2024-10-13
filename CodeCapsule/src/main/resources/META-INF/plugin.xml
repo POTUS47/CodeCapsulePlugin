@@ -43,8 +43,11 @@
         <group text="MyTools" id="MyTools">
             <add-to-group group-id="MainMenu" />
         </group>
-        <action id="SaveFileId" class="plugin.capsule.SaveDocs" text="SaveFile" description="SaveFile">
+        <action id="SaveFileId" class="plugin.capsule.SaveDocs" text="查看版本记录" description="查看版本记录">
             <add-to-group group-id="MyTools" anchor="first"/>
+        </action>
+        <action id="SaveFileIdInPopup" class="plugin.capsule.SaveDocs" text="查看版本记录" description="查看版本记录">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
 <!--        <action id="StartUpId" class="plugin.capsule.StartUp" text="StartUp" description="StartUp">-->
 <!--            <add-to-group group-id="MyTools" />-->
