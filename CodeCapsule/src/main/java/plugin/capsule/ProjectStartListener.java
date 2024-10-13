@@ -7,6 +7,9 @@ import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 //该类用于在项目启动时实例化启动类StartUp
 //区分项目启动和IntelliJ IDEA启动
 public class ProjectStartListener  implements ProjectActivity {
@@ -23,6 +26,13 @@ public class ProjectStartListener  implements ProjectActivity {
     public @Nullable Object execute(@NotNull Project project, @NotNull Continuation<? super Unit> continuation) {
         // 在协程中执行的代码
         System.out.println("协程项目启动: " + project.getName());
+
+        // 测试使用
+//        try {
+//            VersionManage.revertVersion("Version2");
+//        } catch (IOException | NoSuchAlgorithmException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return Unit.INSTANCE;  // 返回 Kotlin 的 Unit 实例
     }

@@ -34,6 +34,7 @@ public class FileChangeListener implements VirtualFileListener {
     public void fileCreated(@NotNull VirtualFileEvent event) {
         // 文件创建后的逻辑
         dealChange(event);
+        System.out.println("文件创建");
     }
 
     private void dealChange(@NotNull VirtualFileEvent event) {
@@ -54,7 +55,6 @@ public class FileChangeListener implements VirtualFileListener {
 
         // 构造 src 文件夹的目标路径
         Path srcFolderPath = Paths.get(projectPath, "src");
-        System.out.println("src 文件夹路径: " + srcFolderPath);
 
         // 获取变更文件路径
         VirtualFile file = event.getFile();
