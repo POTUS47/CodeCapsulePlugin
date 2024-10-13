@@ -179,22 +179,23 @@ public class VersionManage {
     }
 
     // 重建项目文件结构
-    public static void rebuildProjectStructure(ProjectStructure versionStructure, File tempDir) throws IOException {
+    public static void rebuildProjectStructure(ProjectStructure versionStructure, File targetDir) throws IOException {
         // 遍历项目结构中的文件
         for (Map.Entry<String, FileNode> entry : versionStructure.getFiles().entrySet()) {
             String fileName = entry.getKey();
             FileNode node = entry.getValue();
             // 调用递归方法重建结构
-            rebuildNodeStructure(node, fileName, tempDir);
+            rebuildNodeStructure(node, fileName, targetDir,targetDir);
         }
     }
 
     // 递归方法，重建每个节点的结构
-    private static void rebuildNodeStructure(FileNode node, String currentName, File currentDir) throws IOException {
+    private static void rebuildNodeStructure(FileNode node, String currentName, File currentDir,File targetRootDir) throws IOException {
         // 根据节点类型进行处理
         if ("directory".equals(node.getType())) {
             // 创建目录
             File newDir = new File(currentDir, currentName);
+            //File newVersion = new File(oldVersionDir, currentName);
             if (!newDir.exists()) {
                 boolean created = newDir.mkdir();
                 if (created) {
@@ -209,28 +210,33 @@ public class VersionManage {
                 String childName = childEntry.getKey();
                 FileNode childNode = childEntry.getValue();
                 // 递归调用以处理子节点
-                rebuildNodeStructure(childNode, childName, newDir);
+                rebuildNodeStructure(childNode, childName, newDir,targetRootDir);
             }
             System.out.println("结束处理"+currentName+"目录下的子文件" );
         } else if ("file".equals(node.getType())) {
             // 文件节点
             int lastModifiedVersion = node.getLastModifiedVersion();
             // 复制文件到目标目录
-            copyFileToTemp(currentName, lastModifiedVersion, currentDir);
+            copyFileToTemp(currentName, lastModifiedVersion, currentDir,targetRootDir);
         }
     }
 
     // 辅助函数：复制指定文件到指定目录
-    public static void copyFileToTemp(String fileName, int versionNum, File targetDir) throws IOException {
+    public static void copyFileToTemp(String fileName, int versionNum, File targetDir,File targetRootDir) throws IOException {
+
+        Path relativePath = targetRootDir.toPath().relativize(targetDir.toPath()); // 计算相对路径
         // 拼接版本名称
         String VersionName = "Version" + versionNum;
         // 获取特定文件夹
         File versionFolder = findVersionFolder(VersionName);
+        // 拼接 relativePath
+        Path newPath = versionFolder.toPath().resolve(relativePath);
+        File oldVersionDir=newPath.toFile();
         if (versionFolder == null || !versionFolder.exists()) {
-            throw new IOException("未找到版本文件夹: " + VersionName);
+            throw new IOException("未找到版本文件夹: " + versionFolder.getAbsolutePath());
         }
         // 在版本文件夹中查找文件
-        File targetFile = new File(versionFolder, fileName);
+        File targetFile = new File(oldVersionDir, fileName);
         if (!targetFile.exists()) {
             throw new IOException("未找到文件: " + targetFile.getAbsolutePath());
         }
