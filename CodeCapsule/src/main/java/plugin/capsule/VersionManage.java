@@ -89,6 +89,7 @@ public class VersionManage {
             System.out.println("未找到版本文件夹: " + targetVersionDir.getAbsolutePath());
             return null;
         }
+        System.out.println("成功找到"+VersionName+"的文件夹: " + targetVersionDir.getAbsolutePath());
         return targetVersionDir;
     }
 
@@ -149,9 +150,10 @@ public class VersionManage {
         // 根据给定路径查找版本文件夹
         File versionFolder = findVersionFolder(VersionName);
         File jsonFile = new File(versionFolder, "Structure.json");//指向想读取的json文件
+        System.out.println("成功找到json文件");
         ProjectStructure versionStructure = new ProjectStructure();//创建一个空白的ProjectStructure 对象
         CheckVersionSave.JsonConvertToProjectStructure(jsonFile, versionStructure);//调用函数构建 ProjectStructure 对象
-
+        System.out.println("成功构建了ProjectStructure对象");
         if (!TargetDir.exists()) {
             if (TargetDir.mkdir()) {
                 System.out.println("文件夹不存在，文件夹已创建: " + TargetDir.getAbsolutePath());
@@ -163,6 +165,7 @@ public class VersionManage {
             System.out.println("原文件夹的内容已清空: " + TargetDir.getAbsolutePath());
         }
         //在目标文件夹中重建项目的src文件
+        System.out.println("准备在目标文件夹中重建项目的src文件");/////
         rebuildProjectStructure(versionStructure, TargetDir);
     }
 
@@ -200,7 +203,7 @@ public class VersionManage {
                     System.out.println("创建目录失败: " + newDir.getAbsolutePath());
                 }
             }
-
+            System.out.println("开始处理"+currentName+"目录下的子文件" );
             // 遍历子节点
             for (Map.Entry<String, FileNode> childEntry : node.getChildren().entrySet()) {
                 String childName = childEntry.getKey();
@@ -208,6 +211,7 @@ public class VersionManage {
                 // 递归调用以处理子节点
                 rebuildNodeStructure(childNode, childName, newDir);
             }
+            System.out.println("结束处理"+currentName+"目录下的子文件" );
         } else if ("file".equals(node.getType())) {
             // 文件节点
             int lastModifiedVersion = node.getLastModifiedVersion();
@@ -247,34 +251,34 @@ public class VersionManage {
     }
 
     //对外接口：回退到某个版本
-    public static void revertVersion (String VersionName) throws IOException, NoSuchAlgorithmException {
-        CheckOneVersion(VersionName);
-/*        //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
-        //比如C:\Users\10510\IdeaProjects\trytry
-        Path projectPath=StartUp.getProjectRootPath();
-        Path versionHistoryPath = null;
-        if (projectPath != null) {
-            //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
-            versionHistoryPath = projectPath.resolve("VersionHistory").resolve("Temp");
-        }
-        // 创建一个List来存储所有新创建或更新的路径,(文件监听捕捉不到）
-        List<Path> paths = new ArrayList<>();
-
-        // 递归遍历Temp目录，删除项目中对应的文件
-        deleteDuplicateFiles(versionHistoryPath, projectPath);
-
-        // 将Temp目录中的内容复制到项目根目录
-        copyFiles(versionHistoryPath, projectPath,paths);
-        System.out.println("版本回退完成.");
-
-        //保存新版本
-        paths.forEach(System.out::println);
-        Path baseDir=StartUp.getVersionHistoryPath();
-
-        //开始报错
-        CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());*/
-    }
+//    public static void revertVersion (String VersionName) throws IOException, NoSuchAlgorithmException {
+//        CheckOneVersion(VersionName);
+//       //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
+//        //比如C:\Users\10510\IdeaProjects\trytry
+//        Path projectPath=StartUp.getProjectRootPath();
+//        Path versionHistoryPath = null;
+//        if (projectPath != null) {
+//            //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
+//            versionHistoryPath = projectPath.resolve("VersionHistory").resolve("Temp");
+//        }
+//        // 创建一个List来存储所有新创建或更新的路径,(文件监听捕捉不到）
+//        List<Path> paths = new ArrayList<>();
+//
+//        // 递归遍历Temp目录，删除项目中对应的文件
+//        deleteDuplicateFiles(versionHistoryPath, projectPath);
+//
+//        // 将Temp目录中的内容复制到项目根目录
+//        copyFiles(versionHistoryPath, projectPath,paths);
+//        System.out.println("版本回退完成.");
+//
+//        //保存新版本
+//        paths.forEach(System.out::println);
+//        Path baseDir=StartUp.getVersionHistoryPath();
+//
+//        //开始报错
+//        CheckVersionSave check=new CheckVersionSave();
+//        check.checkVersionSave(paths, baseDir.toString());
+//    }
 
     // 辅助函数：删除当前项目中的重复文件
 /*

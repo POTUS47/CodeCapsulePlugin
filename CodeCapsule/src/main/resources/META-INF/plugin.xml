@@ -35,6 +35,11 @@
         <postStartupActivity implementation="plugin.capsule.ProjectStartListener"/>
         <toolWindow id="VersionHistory" secondary="true" icon="AllIcons.Toolwindows.WebToolWindow" anchor="right"
                     factoryClass="plugin.ui.VersionHistoryUI"/>
+        <toolWindow id="Directory Tree"
+                    factoryClass="plugin.ui.DirTree"
+                    anchor="right"
+                    canCloseContent="false"
+                    hideOnEmptyContent="false"/>
     </extensions>
     <actions>
         <group text="MyTools" id="MyTools">

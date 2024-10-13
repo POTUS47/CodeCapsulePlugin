@@ -7,7 +7,9 @@ import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
 //该类用于在项目启动时实例化启动类StartUp
@@ -27,10 +29,14 @@ public class ProjectStartListener  implements ProjectActivity {
         // 在协程中执行的代码
         System.out.println("协程项目启动: " + project.getName());
 
-        // 测试使用
+
+        Path projectPath=StartUp.getProjectRootPath();
+        Path srcPath = projectPath.resolve("src");
+        File targetDir = srcPath.toFile();
+
 //        try {
-//            VersionManage.revertVersion("Version2");
-//        } catch (IOException | NoSuchAlgorithmException e) {
+//            VersionManage.GetVersionAllFiles("Version4",targetDir);
+//        } catch (IOException e) {
 //            throw new RuntimeException(e);
 //        }
 
