@@ -35,6 +35,7 @@
         <postStartupActivity implementation="plugin.capsule.ProjectStartListener"/>
         <toolWindow id="VersionHistory" secondary="true" icon="AllIcons.Toolwindows.WebToolWindow" anchor="right"
                     factoryClass="plugin.ui.VersionHistoryUI"/>
+        <notificationGroup id="Custom Notification Group" displayType="BALLOON" isLogByDefault="true"/>
 
     </extensions>
     <actions>

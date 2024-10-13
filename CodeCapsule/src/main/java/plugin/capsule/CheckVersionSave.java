@@ -172,7 +172,7 @@ public class CheckVersionSave {
             System.out.println("要检查的是目录！");///////////////////////////
             hasChanges=true;//有目录必定变
             // 获取上一个版本中的目录节点
-            if( !findOrCreateCurrentDir(file, currentFiles)){
+            if( !findOrCreateCurrentDir(file,filePath, currentFiles)){
                 throw new IOException("Failed to create or find directory: " + file.getAbsolutePath());
             }
         } else {
@@ -184,8 +184,8 @@ public class CheckVersionSave {
     }
 
     // 辅助函数：查找当前版本的目录节点（查找到就删除，查找不到就创建）
-    private boolean findOrCreateCurrentDir(File dir, Map<String, FileNode> currentFiles) {
-        String[] pathParts = dir.getPath().split(Pattern.quote(File.separator));  // 使用 Pattern.quote 来处理分隔符
+    private boolean findOrCreateCurrentDir(File dir, Path fileRelativePath,Map<String, FileNode> currentFiles) {
+        String[] pathParts = fileRelativePath.toString().split(Pattern.quote(File.separator));  // 使用 Pattern.quote 来处理分隔符
         Map<String, FileNode> currentLevel = currentFiles;
         FileNode currentNode = null;
         boolean isExist = true;
