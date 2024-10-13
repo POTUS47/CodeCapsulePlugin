@@ -144,27 +144,36 @@ public class VersionManage {
         return null;
     }
 
-    // 核心函数：把某个版本的全部文件全部整理到TEMP文件夹
-    public static void GetVersionAllFiles(String VersionName) throws IOException {
+    // 核心函数：把某个版本的全部文件全部整理到某个文件夹
+    public static void GetVersionAllFiles(String VersionName,File TargetDir) throws IOException {
         // 根据给定路径查找版本文件夹
         File versionFolder=findVersionFolder(VersionName);
         File jsonFile = new File(versionFolder, "Structure.json");//指向想读取的json文件
         ProjectStructure versionStructure = new ProjectStructure();//创建一个空白的ProjectStructure 对象
         CheckVersionSave.JsonConvertToProjectStructure(jsonFile,versionStructure);//调用函数构建 ProjectStructure 对象
-        // 在VersionHistory下创建名为Temp的文件夹
-        File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
-        if (!tempDir.exists()) {
-            if( tempDir.mkdir()) {
-                System.out.println("Temp文件夹已创建: " + tempDir.getAbsolutePath());
+
+        if (!TargetDir.exists()) {
+            if( TargetDir.mkdir()) {
+                System.out.println("文件夹不存在，文件夹已创建: " + TargetDir.getAbsolutePath());
             } else {
-                throw new IOException("创建Temp文件夹失败: " + tempDir.getAbsolutePath());
+                throw new IOException("文件夹不存在，创建文件夹失败: " + TargetDir.getAbsolutePath());
             }
         }
         else{
-            clearDirectory(tempDir);//清空原版TEMP文件夹里的内容
+            clearDirectory(TargetDir);//清空原文件夹里的内容
+            System.out.println("原文件夹的内容已清空: " + TargetDir.getAbsolutePath());
         }
-        //在TEMP中重建整个项目
-        rebuildProjectStructure(versionStructure, tempDir);
+        //在目标文件夹中重建项目的src文件
+        rebuildProjectStructure(versionStructure, TargetDir);
+    }
+
+    // 查看某个版本代码：把某个版本的全部文件整理到TEMP文件夹中
+    public static void CheckOneVersion(String VersionName) throws IOException {
+        // 根据给定路径查找版本文件夹
+        File versionFolder=findVersionFolder(VersionName);
+        // 在VersionHistory下创建名为Temp的文件夹
+        File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
+        GetVersionAllFiles(VersionName,tempDir);
     }
 
     // 重建项目文件结构
@@ -240,10 +249,10 @@ public class VersionManage {
 
     //对外接口：回退到某个版本
     public static void revertVersion(String VersionName) throws IOException, NoSuchAlgorithmException {
-//        GetVersionAllFiles(VersionName);
-
+        CheckOneVersion(VersionName);
+        //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
         //比如C:\Users\10510\IdeaProjects\trytry
-        Path projectPath=StartUp.getProjectRootPath();
+/*        Path projectPath=StartUp.getProjectRootPath();
         Path versionHistoryPath = null;
         if (projectPath != null) {
             //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
