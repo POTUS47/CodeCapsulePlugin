@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 public class CompressDocs {
 
-    public static void CompressDocs(String originalPath,String version)  {
+    public static void CompressDocs(String originalPath,Path versionPath)  {
         // 转换文件路径为 URL 格式
         String urlPath = VirtualFileManager.constructUrl("file", originalPath);
 
@@ -46,15 +46,15 @@ public class CompressDocs {
             try {
                 // 定义保存的目录和文件名
                 //String targetDirectory = e.getProject().getBasePath();  // 使用项目的根目录
-                String targetDirectory=StartUp.getProjectRootPath().toString();
+                //String targetDirectory=StartUp.getProjectRootPath().toString();
 
                 // 拼接路径
-                Path versionHistoryDir = Paths.get(targetDirectory, "VersionHistory", version);
-                    // 确保 "VersionHistory" 和 "version" 目录存在
-                Files.createDirectories(versionHistoryDir);
+//                Path versionHistoryDir = Paths.get(targetDirectory, "VersionHistory", version);
+//                    // 确保 "VersionHistory" 和 "version" 目录存在
+//                Files.createDirectories(versionHistoryDir);
 
                     // 定义目标文件路径
-                Path binaryFilePath = versionHistoryDir.resolve(virtualFile.getName() + ".gz");
+                Path binaryFilePath = versionPath.resolve(virtualFile.getName() + ".gz");
 
                 // 使用 GZIPOutputStream 进行压缩，并将 Snapshot 对象序列化
                 try (FileOutputStream fos = new FileOutputStream(binaryFilePath.toFile());

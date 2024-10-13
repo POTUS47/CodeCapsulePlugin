@@ -1,62 +1,29 @@
 package plugin.ui;
-import plugin.capsule.VersionManage;
-import com.intellij.openapi.project.DumbAware;
+
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
+
 import com.intellij.ui.components.JBScrollPane;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.io.IOException;
 
-public class DirTree implements ToolWindowFactory, DumbAware {
-    private DirTreeWindow dirTreeWindow;
 
-    @Override
-    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        dirTreeWindow = new DirTreeWindow(project);  // 仅传入 Project 实例
-        try {
-            setDirectoryPath("Version2");  // 设置默认的目录路径
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // 将 dirTreeWindow 作为内容添加到工具窗口中
-        toolWindow.getContentManager().addContent(
-                toolWindow.getContentManager().getFactory().createContent(dirTreeWindow, "文件树", false)
-        );
-
-        // 示例: 通过按钮点击切换到“bin”目录
-        JButton switchToBinButton = new JButton("切换到 bin 目录");
-        switchToBinButton.addActionListener(e -> {
-            try {
-                setDirectoryPath("Version1");
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });  // 切换到“bin”目录
-        dirTreeWindow.add(switchToBinButton, BorderLayout.SOUTH);  // 将按钮添加到窗口底部
-    }
-
-    public void setDirectoryPath(String relativePath) throws IOException {
-        if (dirTreeWindow != null) {
-            dirTreeWindow.loadDirectory(relativePath);  // 调用 loadDirectory 加载目录
-        }
-    }
-}
+//DirTree dirTree= new DirTree(project);
+//dirTree.loadDirectory("Version2");
+//
+////切换方法
+// dirTree.loadDirectory("Version1");
 
 // 自定义面板类，用于展示项目的目录树
-class DirTreeWindow extends JPanel {
+class DirTree extends JPanel {
     private final Project project;
     private JTree tree;
 
-    public DirTreeWindow(Project project) {
+    public DirTree(Project project) {
         // 设置面板布局为边界布局
         super(new BorderLayout());
         // 初始化项目
@@ -64,9 +31,9 @@ class DirTreeWindow extends JPanel {
     }
 
     // 加载指定目录下的文件树，relativePath 为相对于根目录的路径
-    public void loadDirectory(String Version) throws IOException {
+    public void loadDirectory(String Version)  {
         //加载版本文件到Temp/src里
-//        VersionManage.CheckOneVersion(Version);
+        //VersionManage.CheckOneVersion(Version);
 
         // 清空当前面板中的所有组件
         this.removeAll();
