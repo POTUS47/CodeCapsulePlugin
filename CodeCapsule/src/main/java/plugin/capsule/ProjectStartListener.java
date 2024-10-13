@@ -30,15 +30,19 @@ public class ProjectStartListener  implements ProjectActivity {
         System.out.println("协程项目启动: " + project.getName());
 
 
-        Path projectPath=StartUp.getProjectRootPath();
-        Path srcPath = projectPath.resolve("src");
-        File targetDir = srcPath.toFile();
-
+//        Path projectPath=StartUp.getProjectRootPath();
+//        Path srcPath = projectPath.resolve("src");
+//        File targetDir = srcPath.toFile();
 //        try {
-//            VersionManage.GetVersionAllFiles("Version4",targetDir);
+//            VersionManage.CheckOneVersion("Version2");
 //        } catch (IOException e) {
 //            throw new RuntimeException(e);
 //        }
+        try {
+            VersionManage.CheckOneVersion("Version2");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return Unit.INSTANCE;  // 返回 Kotlin 的 Unit 实例
     }
