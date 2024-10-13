@@ -156,6 +156,7 @@ public class VersionManage {
         System.out.println("成功构建了ProjectStructure对象");
 
         if (!TargetDir.exists()) {
+            System.out.println(TargetDir.toPath()+"不存在！");
             // 如果目录不存在，尝试创建
             try {
                 Files.createDirectories(TargetDir.toPath());
@@ -165,6 +166,7 @@ public class VersionManage {
             }
         } else {
             // 如果目录已经存在
+            System.out.println(TargetDir.toPath()+"开始清理！");
             clearDirectory(TargetDir);//清空原文件夹里的内容
             System.out.println("原文件夹的内容已清空: " + TargetDir.getAbsolutePath());
         }
@@ -181,6 +183,7 @@ public class VersionManage {
         File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
         File srcDir = new File(tempDir, "src");
         GetVersionAllFiles(VersionName, srcDir);
+        System.out.println("GetVersionAllFiles执行完毕！");
         ///////接下来需要调用ply的接口 把文件修改成正常
     }
 
@@ -267,10 +270,16 @@ public class VersionManage {
         File[] files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
-                Files.delete(file.toPath());// 直接使用 Files.delete 方法删除文件或目录
+                if (file.isDirectory()) {
+                    // 递归删除子目录内容
+                    clearDirectory(file);
+                }
+                // 删除文件或空目录
+                Files.delete(file.toPath());
             }
         }
     }
+
 
 
 
