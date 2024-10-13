@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -52,7 +53,7 @@ public class CheckVersionSave {
                 writer.newLine();
                 writer.write("无描述");  // 写描述
                 writer.newLine();
-                writer.write("创建时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
+                writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
             }
             System.out.println("Version1 created and project files copied successfully.");
             return true; // 初始版本已创建
@@ -107,7 +108,7 @@ public class CheckVersionSave {
                 writer.newLine();
                 writer.write("无描述");  // 写描述
                 writer.newLine();
-                writer.write("创建时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
+                writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
                 System.out.println("成功创建txt描述文件！！");///////////////////////////
             }
         }else {
@@ -363,6 +364,15 @@ public class CheckVersionSave {
         return node;
     }
 
+    // 辅助函数：计算某文件相对于src的相对路径
+    public static Path getRelativePathToSrc(File file){
+        // 获取项目的根路径，然后连接子路径 "src"
+        Path rootDir=StartUp.getProjectRootPath();
+        Path srcPath = rootDir.resolve("src");
+        Path relativePath = srcPath.relativize(file.toPath()); // 计算相对路径
+        return relativePath;
+    }
+
     //需改成ply接口：仅用于创建Version1:把指定目录下的文件，全部拷贝到目标目录中（排除VersionHistory）
     public void copyDirectory(File sourceDir, File targetDir) throws IOException {
         if (!targetDir.exists()) {
@@ -375,14 +385,14 @@ public class CheckVersionSave {
                 if ("VersionHistory".equals(file.getName())) {
                     continue;                // 排除名为 "VersionHistory" 的文件夹
                 }
-                //File targetFile = new File(targetDir, file.getName());
+                File targetFile = new File(targetDir, file.getName());
                 if (file.isDirectory()) {
                     // 如果是目录，递归调用复制
-                    copyDirectory(file, targetDir);
+                    copyDirectory(file, targetFile);
                 } else {
                     // 如果是文件，直接复制
-                    //CompressDocs.CompressDocs(file.toPath().toString(),targetFile.getName());
-                    Files.copy(file.toPath(), targetDir.toPath().resolve(file.getName()));
+                    Files.copy(file.toPath(), targetFile.toPath());
+                    //Files.copy(file.toPath(), targetDir.toPath().resolve(file.getName()));
                 }
             }
         }
@@ -390,7 +400,11 @@ public class CheckVersionSave {
 
     //需改成ply接口：
     private void saveFileToVersion(File file, File versionDir) throws IOException {
-        File targetFile = new File(versionDir, file.getName());
+        // 获取 file 相对于 src 目录的相对路径
+        Path relativePath = getRelativePathToSrc(file); // 假设你已有的函数名为 getRelativePathToSrc
+
+        // 在 versionDir 后拼接相对路径，构建最终的目标文件路径
+        File targetFile = new File(versionDir, relativePath.toString());
 
         if (file.isDirectory()) {
             // 如果是目录，创建目录
@@ -398,10 +412,13 @@ public class CheckVersionSave {
                 targetFile.mkdirs();
             }
         } else {
-            // 如果是文件，复制文件到目标目录
-            Files.copy(file.toPath(), targetFile.toPath());
+            // 如果是文件，先确保目标文件的父目录存在
+            Files.createDirectories(targetFile.toPath().getParent());
+            // 复制文件到目标目录
+            Files.copy(file.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
+
 }
 
 

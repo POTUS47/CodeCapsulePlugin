@@ -1,4 +1,6 @@
 package plugin.ui;
+import plugin.capsule.StartUp;
+import plugin.capsule.StartUp.*;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -9,18 +11,135 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowFactory;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public final class VersionHistoryUI implements ToolWindowFactory {
+    private Project project;
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+        this.project = project;
         // 显示版本列表的面板
-        JPanel versionPanel = createVersionPanel(toolWindow);
+        JPanel versionPanel = getVersionInfo(toolWindow);
 
-        // 将版本面板设置为工具窗口的内容
+        // 创建工具栏，并在上方添加刷新按钮
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);  // 工具栏不可拖动
+
+        // 创建刷新按钮
+        JButton refreshButton = new JButton("Refresh");
+        toolBar.add(refreshButton);  // 将刷新按钮添加到工具栏
+
+        // 添加刷新按钮的点击事件
+        refreshButton.addActionListener(e -> {
+            // 刷新操作，比如重新加载版本列表
+            JPanel updatedVersionPanel = getVersionInfo(toolWindow);
+            toolWindow.getComponent().remove(versionPanel);  // 移除旧版本面板
+            toolWindow.getComponent().add(updatedVersionPanel, BorderLayout.CENTER);  // 添加更新后的版本面板
+            toolWindow.getComponent().revalidate();
+            toolWindow.getComponent().repaint();
+        });
+
+        // 将工具栏添加到工具窗口的顶部
         toolWindow.getComponent().setLayout(new BorderLayout());
-        toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
+        //toolWindow.getComponent().add(toolBar, BorderLayout.NORTH);  // 将工具栏放在顶部
+        toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);  // 将版本面板放在中央
+
     }
+
+    public JPanel getVersionInfo(ToolWindow toolWindow){
+        JPanel versionPanel = new JPanel();
+        // 获取版本目录路径
+
+        File versionHistoryDir = new File(project.getBasePath() + "/VersionHistory");
+
+        // 检查版本历史目录是否存在
+        if (versionHistoryDir.exists() && versionHistoryDir.isDirectory()) {
+            File[] versionDirs = versionHistoryDir.listFiles(File::isDirectory);
+
+            if (versionDirs != null) {//如果VersionHistory里有版本文件夹
+                for (File versionDir : versionDirs) {
+                    File versionInfoFile = new File(versionDir, "version_info.txt");
+
+                    if (versionInfoFile.exists()) {
+                        try {
+                            // 读取 version_info.txt 文件
+                            BufferedReader reader = new BufferedReader(new FileReader(versionInfoFile));
+                            String versionName = reader.readLine(); // 第一行：版本名称
+                            String versionDescription = reader.readLine(); // 第二行：版本描述
+                            String versionTime = reader.readLine(); // 第三行：记录时间
+                            reader.close();
+
+                            // 创建按钮，显示版本信息
+                            JButton versionButton = createVersionButton(toolWindow,versionName, versionDescription, versionTime);
+                            versionPanel.add(versionButton);
+                            versionPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 添加间距
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return versionPanel;
+    }
+
+    // 创建包含版本信息的按钮
+    private JButton createVersionButton(ToolWindow toolWindow,String versionName, String versionDescription, String versionTime) {
+        // 组合版本信息文本
+        String buttonText = "<html><b>Version:</b> " + versionName +
+                "<br><b>Description:</b> " + versionDescription +
+                "<br><b>Time:</b> " + versionTime + "</html>";
+
+        // 创建按钮
+        JButton versionButton = new JButton(buttonText);
+        versionButton.setHorizontalAlignment(SwingConstants.LEFT); // 设置文本左对齐
+        // 设置按钮的背景颜色、前景色和字体
+        versionButton.setBackground(Color.GRAY);  // 背景色
+        versionButton.setForeground(Color.cyan);  // 前景色
+        versionButton.setFont(new Font("Monaco", Font.PLAIN, 14));  // 字体
+        versionButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));  // 设置按钮的边框
+
+        // 设置按钮的悬停效果
+        versionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                versionButton.setBackground(Color.LIGHT_GRAY);  // 鼠标悬停时背景色变浅
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                versionButton.setBackground(Color.GRAY);  // 鼠标移开时恢复背景色
+            }
+        });
+
+        // 设置按钮点击事件
+        versionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 切换到空面板
+                switchToEmptyPanel(toolWindow);
+            }
+        });
+
+        return versionButton;
+    }
+
 
     // 创建显示版本按钮的面板
     private JPanel createVersionPanel(ToolWindow toolWindow) {
@@ -56,7 +175,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 切换回版本面板
-                JPanel versionPanel = createVersionPanel(toolWindow);
+                JPanel versionPanel = getVersionInfo(toolWindow);
                 toolWindow.getComponent().removeAll();
                 toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
                 toolWindow.getComponent().revalidate();
