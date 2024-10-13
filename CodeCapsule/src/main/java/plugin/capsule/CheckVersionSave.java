@@ -33,7 +33,7 @@ public class CheckVersionSave {
             System.out.println("无第一个版本，开始生成第一个版本！");/////////////////////////////
             // 创建第一个版本的文件夹
             File version1Dir = new File(baseDir, "Version1");//使用父目录和子路径名创建一个 File 对象,即在VersionHistory下创建Version1
-            version1Dir.mkdirs();//递归地创建所有必要的目录
+            version1Dir.mkdirs();//创建所有必要的目录
             // 获取项目的根目录
             File projectRootDir = new File(new File(baseDir).getParent(), "src"); //项目根目录在 baseDir 的上级
             System.out.println("获取到项目的根目录："+projectRootDir.getAbsolutePath());/////////////////////////////
@@ -366,7 +366,7 @@ public class CheckVersionSave {
     //需改成ply接口：仅用于创建Version1:把指定目录下的文件，全部拷贝到目标目录中（排除VersionHistory）
     public void copyDirectory(File sourceDir, File targetDir) throws IOException {
         if (!targetDir.exists()) {
-            targetDir.mkdirs(); // 创建目标文件夹
+            targetDir.mkdirs();
         }
         // 遍历源目录的所有文件和文件夹
         File[] files = sourceDir.listFiles();
@@ -375,14 +375,14 @@ public class CheckVersionSave {
                 if ("VersionHistory".equals(file.getName())) {
                     continue;                // 排除名为 "VersionHistory" 的文件夹
                 }
-                File targetFile = new File(targetDir, file.getName());
+                //File targetFile = new File(targetDir, file.getName());
                 if (file.isDirectory()) {
                     // 如果是目录，递归调用复制
-                    copyDirectory(file, targetFile);
+                    copyDirectory(file, targetDir);
                 } else {
                     // 如果是文件，直接复制
                     //CompressDocs.CompressDocs(file.toPath().toString(),targetFile.getName());
-                    Files.copy(file.toPath(), targetFile.toPath());
+                    Files.copy(file.toPath(), targetDir.toPath().resolve(file.getName()));
                 }
             }
         }
