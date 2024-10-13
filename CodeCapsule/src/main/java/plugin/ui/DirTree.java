@@ -1,4 +1,5 @@
 package plugin.ui;
+import com.intellij.diff.DiffContentFactory;
 import com.intellij.diff.contents.DiffContent;
 import plugin.capsule.LoadDocsCompressed;
 import com.intellij.openapi.project.Project;
@@ -23,6 +24,7 @@ import com.intellij.diff.requests.SimpleDiffRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -172,9 +174,10 @@ class DirTree extends JPanel {
             }
 
             // 创建 DiffContent 对象
-            DiffContent content1 = createContentFromString(snapshotContentA);
-            DiffContent content2 = createContentFromString(snapshotContentB);
-
+//            DiffContent content1 = createContentFromString(snapshotContentA);
+//            DiffContent content2 = createContentFromString(snapshotContentB);
+            DiffContent content1 = DiffContentFactory.getInstance().create(snapshotContentA);
+            DiffContent content2 = DiffContentFactory.getInstance().create(snapshotContentB);
             // 创建并显示差异请求
             SimpleDiffRequest request = new SimpleDiffRequest("String Comparison", content1, content2, "Current Version", "Other Version");
             DiffManager.getInstance().showDiff(project, request);

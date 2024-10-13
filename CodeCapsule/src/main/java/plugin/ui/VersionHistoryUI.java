@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
+import plugin.capsule.VersionManage;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -138,7 +139,13 @@ public final class VersionHistoryUI implements ToolWindowFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 切换到空面板
-                switchToEmptyPanel(versionButton.getName(),toolWindow);
+                try {
+                    switchToEmptyPanel(versionButton.getName(),toolWindow);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -147,8 +154,9 @@ public final class VersionHistoryUI implements ToolWindowFactory {
 
 
     // 切换到空面板，并添加返回按钮
-    private void switchToEmptyPanel(String Id,ToolWindow toolWindow) {
+    private void switchToEmptyPanel(String Id,ToolWindow toolWindow) throws IOException, ClassNotFoundException {
         JPanel emptyPanel = new JPanel(new BorderLayout());
+        VersionManage.CheckOneVersion(Id);
         dirTree.loadDirectory("Version2");
 
         // 添加返回按钮
