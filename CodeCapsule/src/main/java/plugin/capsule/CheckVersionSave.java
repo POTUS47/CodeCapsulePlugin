@@ -391,7 +391,7 @@ public class CheckVersionSave {
                     copyDirectory(file, targetFile);
                 } else {
                     // 如果是文件，直接复制
-                    CompressDocs.CompressDocs(file.toPath().toString(),targetDir.getPath());
+                    CompressDocs.CompressDocs(file.toPath().toString(),targetDir.toPath());
                     //Files.copy(file.toPath(), targetFile.toPath());
                     //Files.copy(file.toPath(), targetDir.toPath().resolve(file.getName()));
                 }
@@ -417,7 +417,7 @@ public class CheckVersionSave {
             Files.createDirectories(targetFile.toPath().getParent());
             // 复制文件到目标目录
             //Files.copy(file.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            CompressDocs.CompressDocs(file.toPath().toString(),versionDir.getPath());
+            CompressDocs.CompressDocs(file.toPath().toString(),versionDir.toPath());
         }
     }
 

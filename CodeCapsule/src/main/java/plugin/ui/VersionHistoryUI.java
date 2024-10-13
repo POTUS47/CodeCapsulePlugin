@@ -28,10 +28,12 @@ import java.nio.file.Path;
 
 public final class VersionHistoryUI implements ToolWindowFactory {
     private Project project;
+    private DirTree dirTree;
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         this.project = project;
+        dirTree= new DirTree(project);
         // 显示版本列表的面板
         JPanel versionPanel = getVersionInfo(toolWindow);
 
@@ -168,6 +170,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
     // 切换到空面板，并添加返回按钮
     private void switchToEmptyPanel(ToolWindow toolWindow) {
         JPanel emptyPanel = new JPanel(new BorderLayout());
+        dirTree.loadDirectory("Version2");
 
         // 添加返回按钮
         JButton backButton = new JButton("Back");
@@ -184,13 +187,14 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         });
 
         // 将返回按钮放在左上角
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.add(backButton);
-        emptyPanel.add(topPanel, BorderLayout.NORTH);
+        //emptyPanel.add(topPanel, BorderLayout.NORTH);
+        dirTree.add(topPanel, BorderLayout.NORTH);
 
         // 替换工具窗口的内容为空面板
         toolWindow.getComponent().removeAll();
-        toolWindow.getComponent().add(emptyPanel, BorderLayout.CENTER);
+        toolWindow.getComponent().add(dirTree, BorderLayout.CENTER);
         toolWindow.getComponent().revalidate();
         toolWindow.getComponent().repaint();
     }
