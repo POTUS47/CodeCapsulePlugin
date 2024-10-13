@@ -33,6 +33,7 @@ public class SaveDocs extends AnAction {
             Messages.showErrorDialog("没有打开的项目", "错误");
             return;
         }
+        
 //        VersionHistoryUI dialog = new VersionHistoryUI(project);
 //        dialog.show(); // 显示对话框
 //        Editor editor = e.getData(CommonDataKeys.EDITOR);
@@ -41,7 +42,14 @@ public class SaveDocs extends AnAction {
 //            return;
 //        }
 //        //待修改--------------------------
-//        String targetDirectory1 = e.getProject().getBasePath();  // 使用项目的根目录
+        String targetDirectory1 = e.getProject().getBasePath();  // 使用项目的根目录
+        try {
+            LoadDocsCompressed.loadSnapshotsFromFolder(targetDirectory1);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
 //        String realPath=targetDirectory1+"/src/main/java/plugin/capsule/SnapShot.java";
 //        //------------------------------
 //        CompressDocs.CompressDocs(realPath,"Version1");
