@@ -33,6 +33,11 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="plugin.capsule.ProjectStartListener"/>
+        <toolWindow id="Directory Tree"
+                    factoryClass="plugin.ui.DirTree"
+                    anchor="right"
+                    canCloseContent="false"
+                    hideOnEmptyContent="false"/>
     </extensions>
     <actions>
         <group text="MyTools" id="MyTools">
