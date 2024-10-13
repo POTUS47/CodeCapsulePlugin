@@ -40,7 +40,7 @@ public class ProjectStartListener  implements ProjectActivity {
 //        }
         try {
             VersionManage.CheckOneVersion("Version2");
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 

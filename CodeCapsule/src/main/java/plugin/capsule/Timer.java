@@ -37,13 +37,15 @@ public class Timer {
                     throw new RuntimeException(e);
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
     //对外暴露，当项目关闭或IDEA关闭时可手动触发15s的效果
-    public void onTimeReached15() throws IOException, NoSuchAlgorithmException {
+    public void onTimeReached15() throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
         Path baseDir=StartUp.getVersionHistoryPath();
         List<Path>paths=FileChangeListener.getChangedFilePath();
         System.out.println("baseDir"+baseDir);
