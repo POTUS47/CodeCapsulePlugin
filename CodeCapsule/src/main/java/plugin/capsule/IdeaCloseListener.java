@@ -15,7 +15,7 @@ public class IdeaCloseListener implements AppLifecycleListener {
         try {
             // 通过 timer 调用 onTimeReached15() 方法，判断需不需要保存最新版本
             StartUp.timer.onTimeReached15();
-        } catch (IOException | NoSuchAlgorithmException e) {
+        } catch (IOException | NoSuchAlgorithmException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

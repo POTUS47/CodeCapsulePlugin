@@ -176,7 +176,7 @@ public class VersionManage {
     }
 
     // 查看某个版本代码：把某个版本的全部文件整理到TEMP文件夹中
-    public static void CheckOneVersion(String VersionName) throws IOException {
+    public static void CheckOneVersion(String VersionName) throws IOException, ClassNotFoundException {
         // 根据给定路径查找版本文件夹
         File versionFolder = findVersionFolder(VersionName);
         // 在VersionHistory下创建名为Temp的文件夹
@@ -184,18 +184,23 @@ public class VersionManage {
         File srcDir = new File(tempDir, "src");
         GetVersionAllFiles(VersionName, srcDir);
         System.out.println("GetVersionAllFiles执行完毕！");
-        ///////接下来需要调用ply的接口 把文件修改成正常
+        //把src下的文件解压缩，反序列化
+        LoadDocsCompressed.loadSnapshotsFromFolder(srcDir.getPath());
     }
 
-    public static void RevertOneVersion(String VersionName) throws IOException {
+    public static void RevertOneVersion(String VersionName) throws IOException, ClassNotFoundException {
         // 根据给定路径查找版本文件夹
         File versionFolder = findVersionFolder(VersionName);
         Path projectDir=StartUp.getProjectRootPath();
         Path srcPath = projectDir.resolve("src");
         // 在VersionHistory下创建名为Temp的文件夹
         GetVersionAllFiles(VersionName, srcPath.toFile());
+        //把src下的文件解压缩，反序列化
+        LoadDocsCompressed.loadSnapshotsFromFolder(srcPath.toString());
+        //接下来要手动保存
+/*        CheckVersionSave check=new CheckVersionSave();
+        check.checkVersionSave(paths, baseDir.toString());*/
     }
-
 
     // 重建项目文件结构
     public static void rebuildProjectStructure(ProjectStructure versionStructure, File targetDir) throws IOException {

@@ -54,8 +54,6 @@ public class SaveDocs extends AnAction {
 //        //------------------------------
 //        CompressDocs.CompressDocs(realPath,"Version1");
 
-
-
 //
 //        try {
 //            // 反序列化并解压缩获取 Snapshot

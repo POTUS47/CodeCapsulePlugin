@@ -22,6 +22,8 @@ public class ProjectCloseListener implements ProjectManagerListener {
             StartUp.timer.onTimeReached15();
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }

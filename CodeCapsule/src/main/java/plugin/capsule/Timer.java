@@ -37,13 +37,15 @@ public class Timer {
                     throw new RuntimeException(e);
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
     //对外暴露，当项目关闭或IDEA关闭时可手动触发15s的效果
-    public void onTimeReached15() throws IOException, NoSuchAlgorithmException {
+    public void onTimeReached15() throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
         Path baseDir=StartUp.getVersionHistoryPath();
         List<Path>paths=FileChangeListener.getChangedFilePath();
         System.out.println("baseDir"+baseDir);
@@ -58,13 +60,13 @@ public class Timer {
 
 
         //下面两行用来生成版本
-/*        CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());*/
+       CheckVersionSave check=new CheckVersionSave();
+        check.checkVersionSave(paths, baseDir.toString());
         //清空修改的路径记录
         FileChangeListener.clearChangedFilePath();
 
         //下面一行是我测试版本回退的代码（在TMEP文件夹里回退到第一版） 这行代码不要和上面的两行同时运行！
-        VersionManage.CheckOneVersion("Version2");
+        //VersionManage.CheckOneVersion("Version2");
     }
 
     public void resetTimer0() {
