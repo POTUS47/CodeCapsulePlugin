@@ -241,7 +241,7 @@ public class VersionManage {
             // 文件节点
             int lastModifiedVersion = node.getLastModifiedVersion();
             // 复制文件到目标目录
-            copyFileToTemp(currentName, lastModifiedVersion, currentDir,targetRootDir);
+            copyFileToTemp(currentName+".gz", lastModifiedVersion, currentDir,targetRootDir);
         }
     }
 
