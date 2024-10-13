@@ -1,5 +1,5 @@
 package plugin.capsule;
-import plugin.ui.VersionHistoryUI;
+//import plugin.ui.VersionHistoryUI;
 
 import com.intellij.diff.contents.DiffContent;
 import com.intellij.diff.contents.DocumentContentImpl;
@@ -33,8 +33,8 @@ public class SaveDocs extends AnAction {
             Messages.showErrorDialog("没有打开的项目", "错误");
             return;
         }
-        VersionHistoryUI dialog = new VersionHistoryUI(project);
-        dialog.show(); // 显示对话框
+//        VersionHistoryUI dialog = new VersionHistoryUI(project);
+//        dialog.show(); // 显示对话框
 //        Editor editor = e.getData(CommonDataKeys.EDITOR);
 //        if (editor == null) {
 //            Messages.showErrorDialog("没有打开的编辑器", "错误");

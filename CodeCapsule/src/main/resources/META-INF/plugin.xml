@@ -33,6 +33,8 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="plugin.capsule.ProjectStartListener"/>
+        <toolWindow id="VersionHistory" secondary="true" icon="AllIcons.Toolwindows.WebToolWindow" anchor="right"
+                    factoryClass="plugin.ui.VersionHistoryUI"/>
     </extensions>
     <actions>
         <group text="MyTools" id="MyTools">
