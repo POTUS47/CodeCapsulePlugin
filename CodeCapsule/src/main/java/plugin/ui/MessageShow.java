@@ -7,7 +7,7 @@ import com.intellij.notification.NotificationType;
 
 public class MessageShow {
     // 需要获取回答的提示窗
-    public String showInputDialog(String messageTitle,String question,String defaultAnswer) {
+    public static String showInputDialog(String messageTitle,String question,String defaultAnswer) {
         String message = question; // 提示信息
         String title = messageTitle; // 弹窗标题
         String defaultValue = defaultAnswer; // 输入框中的默认值，可以为空字符串
@@ -25,14 +25,14 @@ public class MessageShow {
         return userInput;
     }
     //提示窗(需要用户点击关闭)
-    public void showMessage(String messageTitle,String messageContent) {
+    public static void showMessage(String messageTitle,String messageContent) {
         String message = messageContent; // 提示内容
         String title = messageTitle; // 弹窗标题
         // 显示提示框
         Messages.showMessageDialog(message, title, Messages.getInformationIcon());
     }
-    //提示窗(不需要用户点击关闭)
-    public void showNotification(String messageTitle, String messageContent) {
+    //右下角提示窗(不需要用户点击关闭)
+    public static void showNotification(String messageTitle, String messageContent) {
         // 创建通知对象
         Notification notification = new Notification(
                 "Custom Notification Group", // 通知组的ID（可以自定义）
