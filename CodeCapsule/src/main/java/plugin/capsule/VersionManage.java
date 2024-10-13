@@ -154,13 +154,17 @@ public class VersionManage {
         ProjectStructure versionStructure = new ProjectStructure();//创建一个空白的ProjectStructure 对象
         CheckVersionSave.JsonConvertToProjectStructure(jsonFile, versionStructure);//调用函数构建 ProjectStructure 对象
         System.out.println("成功构建了ProjectStructure对象");
+
         if (!TargetDir.exists()) {
-            if (TargetDir.mkdir()) {
-                System.out.println("文件夹不存在，文件夹已创建: " + TargetDir.getAbsolutePath());
-            } else {
-                throw new IOException("文件夹不存在，创建文件夹失败: " + TargetDir.getAbsolutePath());
+            // 如果目录不存在，尝试创建
+            try {
+                Files.createDirectories(TargetDir.toPath());
+                System.out.println("文件夹已创建: " + TargetDir.getAbsolutePath());
+            } catch (IOException e) {
+                throw new IOException("创建文件夹失败: " + TargetDir.getAbsolutePath(), e);
             }
         } else {
+            // 如果目录已经存在
             clearDirectory(TargetDir);//清空原文件夹里的内容
             System.out.println("原文件夹的内容已清空: " + TargetDir.getAbsolutePath());
         }
@@ -177,7 +181,20 @@ public class VersionManage {
         File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
         File srcDir = new File(tempDir, "src");
         GetVersionAllFiles(VersionName, srcDir);
+        ///////接下来需要调用ply的接口 把文件修改成正常
     }
+
+    public static void RevertOneVersion(String VersionName) throws IOException {
+        // 根据给定路径查找版本文件夹
+        File versionFolder = findVersionFolder(VersionName);
+        Path projectDir=StartUp.getProjectRootPath();
+
+        // 在VersionHistory下创建名为Temp的文件夹
+        File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
+        File srcDir = new File(tempDir, "src");
+        GetVersionAllFiles(VersionName, srcDir);
+    }
+
 
     // 重建项目文件结构
     public static void rebuildProjectStructure(ProjectStructure versionStructure, File targetDir) throws IOException {
@@ -257,8 +274,7 @@ public class VersionManage {
         }
     }
 
-    public static void copyFileToTemp(String version) {
-    }
+
 
     //对外接口：回退到某个版本
 //    public static void revertVersion (String VersionName) throws IOException, NoSuchAlgorithmException {
