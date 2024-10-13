@@ -35,7 +35,7 @@
         <postStartupActivity implementation="plugin.capsule.ProjectStartListener"/>
         <toolWindow id="VersionHistory" secondary="true" icon="AllIcons.Toolwindows.WebToolWindow" anchor="right"
                     factoryClass="plugin.ui.VersionHistoryUI"/>
-        <toolWindow id="Directory Tree"
+        <toolWindow id="Directory"
                     factoryClass="plugin.ui.DirTree"
                     anchor="right"
                     canCloseContent="false"

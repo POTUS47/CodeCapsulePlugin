@@ -175,7 +175,8 @@ public class VersionManage {
         File versionFolder = findVersionFolder(VersionName);
         // 在VersionHistory下创建名为Temp的文件夹
         File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
-        GetVersionAllFiles(VersionName, tempDir);
+        File srcDir = new File(tempDir, "src");
+        GetVersionAllFiles(VersionName, srcDir);
     }
 
     // 重建项目文件结构
@@ -248,6 +249,9 @@ public class VersionManage {
                 Files.delete(file.toPath());// 直接使用 Files.delete 方法删除文件或目录
             }
         }
+    }
+
+    public static void copyFileToTemp(String version) {
     }
 
     //对外接口：回退到某个版本
