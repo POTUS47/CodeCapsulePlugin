@@ -64,8 +64,8 @@ public class FileChangeListener implements VirtualFileListener {
         if (filePath.startsWith(srcFolderPath)) {
             System.out.println("srcFolderPath " + srcFolderPath);
             System.out.println("filePath " + filePath);
-            // 获取从 src 开始的相对路径
-            Path relativePath = Paths.get(projectPath).relativize(filePath);
+            // 获取从 src 内开始的相对路径
+            Path relativePath = Paths.get(srcFolderPath.toString()).relativize(filePath);
 
             // 防止重复
             if (!changedFilePath.contains(relativePath)) {

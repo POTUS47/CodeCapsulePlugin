@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 public class StartUp {
     // 单例实例
-    //Version
+    //Version1
     private static StartUp instance;
     // 静态变量保存项目根路径
     private static String projectRootPath;

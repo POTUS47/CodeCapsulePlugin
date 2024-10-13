@@ -1,5 +1,8 @@
 package plugin.capsule;
 import com.github.weisj.jsvg.S;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -260,9 +263,9 @@ public class VersionManage {
         paths.forEach(System.out::println);
         Path baseDir=StartUp.getVersionHistoryPath();
 
-//        //开始报错
-//        CheckVersionSave check=new CheckVersionSave();
-//        check.checkVersionSave(paths, baseDir.toString());
+        //开始报错
+        CheckVersionSave check=new CheckVersionSave();
+        check.checkVersionSave(paths, baseDir.toString());
     }
 
     // 辅助函数：删除当前项目中的重复文件
@@ -312,6 +315,9 @@ public class VersionManage {
 
     // 复制Temp目录中的文件到项目根目录
     private static  void copyFiles(Path sourceDir, Path targetDir,List<Path> paths) throws IOException {
+
+        Path projectPath = StartUp.getProjectRootPath();
+        Path srcFolderPath = Paths.get(String.valueOf(projectPath), "src");
         Files.walk(sourceDir).forEach(sourcePath -> {
             try {
                 // 计算相对路径以确定目标路径
@@ -327,8 +333,10 @@ public class VersionManage {
                     // 如果是文件则复制到目标位置
                     Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 }
-                paths.add(targetPath);
                 System.out.println("复制: " + sourcePath + " 到 " + targetPath);
+                Path path = Paths.get(srcFolderPath.toString()).relativize(targetPath);
+                paths.add(path);
+
             } catch (IOException e) {
                 System.err.println("复制文件出错: " + sourcePath + " - " + e.getMessage());
             }

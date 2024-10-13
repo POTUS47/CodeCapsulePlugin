@@ -28,11 +28,11 @@ public class ProjectStartListener  implements ProjectActivity {
         System.out.println("协程项目启动: " + project.getName());
 
         // 测试使用
-//        try {
-//            VersionManage.revertVersion("Version2");
-//        } catch (IOException | NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            VersionManage.revertVersion("Version2");
+        } catch (IOException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
 
         return Unit.INSTANCE;  // 返回 Kotlin 的 Unit 实例
     }
