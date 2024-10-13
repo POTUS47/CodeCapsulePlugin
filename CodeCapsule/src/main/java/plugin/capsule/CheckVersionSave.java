@@ -402,8 +402,7 @@ public class CheckVersionSave {
     //需改成ply接口：
     private void saveFileToVersion(File file, File versionDir) throws IOException {
         // 获取 file 相对于 src 目录的相对路径
-        Path relativePath = getRelativePathToSrc(file); // 假设你已有的函数名为 getRelativePathToSrc
-
+        Path relativePath = getRelativePathToSrc(file);
         // 在 versionDir 后拼接相对路径，构建最终的目标文件路径
         File targetFile = new File(versionDir, relativePath.toString());
 
@@ -417,7 +416,7 @@ public class CheckVersionSave {
             Files.createDirectories(targetFile.toPath().getParent());
             // 复制文件到目标目录
             //Files.copy(file.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            CompressDocs.CompressDocs(file.toPath().toString(),versionDir.toPath());
+            CompressDocs.CompressDocs(file.toPath().toString(),targetFile.toPath().getParent());
         }
     }
 
