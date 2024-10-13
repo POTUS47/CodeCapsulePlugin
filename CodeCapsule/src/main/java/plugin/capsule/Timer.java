@@ -45,8 +45,9 @@ public class Timer {
     //对外暴露，当项目关闭或IDEA关闭时可手动触发15s的效果
     public void onTimeReached15() throws IOException, NoSuchAlgorithmException {
         Path baseDir=StartUp.getVersionHistoryPath();
-        System.out.println("baseDir"+baseDir);
         List<Path>paths=FileChangeListener.getChangedFilePath();
+        System.out.println("baseDir"+baseDir);
+        paths.forEach(path -> System.out.println(path.toString()));
         System.out.println("开始检查是否需要保存");
 
         //检测变量格式
@@ -55,7 +56,7 @@ public class Timer {
         //C:\Users\10510\IdeaProjects\ untitled2\src\hao.java
         //C:\Users\10510\IdeaProjects\ untitled2\src\huai.java
 
-        paths.forEach(path -> System.out.println(path.toString()));
+
 
         CheckVersionSave check=new CheckVersionSave();
         check.checkVersionSave(paths, baseDir.toString());
