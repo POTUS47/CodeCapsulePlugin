@@ -175,7 +175,8 @@ public class VersionManage {
         File versionFolder = findVersionFolder(VersionName);
         // 在VersionHistory下创建名为Temp的文件夹
         File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
-        GetVersionAllFiles(VersionName, tempDir);
+        File srcDir = new File(tempDir, "src");
+        GetVersionAllFiles(VersionName, srcDir);
     }
 
     // 重建项目文件结构
@@ -256,35 +257,38 @@ public class VersionManage {
         }
     }
 
-    //对外接口：回退到某个版本
-    public static void revertVersion (String VersionName) throws IOException, NoSuchAlgorithmException {
-        CheckOneVersion(VersionName);
-/*        //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
-        //比如C:\Users\10510\IdeaProjects\trytry
-        Path projectPath=StartUp.getProjectRootPath();
-        Path versionHistoryPath = null;
-        if (projectPath != null) {
-            //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
-            versionHistoryPath = projectPath.resolve("VersionHistory").resolve("Temp");
-        }
-        // 创建一个List来存储所有新创建或更新的路径,(文件监听捕捉不到）
-        List<Path> paths = new ArrayList<>();
-
-        // 递归遍历Temp目录，删除项目中对应的文件
-        deleteDuplicateFiles(versionHistoryPath, projectPath);
-
-        // 将Temp目录中的内容复制到项目根目录
-        copyFiles(versionHistoryPath, projectPath,paths);
-        System.out.println("版本回退完成.");
-
-        //保存新版本
-        paths.forEach(System.out::println);
-        Path baseDir=StartUp.getVersionHistoryPath();
-
-        //开始报错
-        CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());*/
+    public static void copyFileToTemp(String version) {
     }
+
+    //对外接口：回退到某个版本
+//    public static void revertVersion (String VersionName) throws IOException, NoSuchAlgorithmException {
+//        CheckOneVersion(VersionName);
+//       //实际应替换为：GetVersionAllFiles(VersionName,C:\Users\10510\IdeaProjects\trytry\src对应的file)
+//        //比如C:\Users\10510\IdeaProjects\trytry
+//        Path projectPath=StartUp.getProjectRootPath();
+//        Path versionHistoryPath = null;
+//        if (projectPath != null) {
+//            //比如C:\Users\10510\IdeaProjects\trytry\VersionHistory\Temp
+//            versionHistoryPath = projectPath.resolve("VersionHistory").resolve("Temp");
+//        }
+//        // 创建一个List来存储所有新创建或更新的路径,(文件监听捕捉不到）
+//        List<Path> paths = new ArrayList<>();
+//
+//        // 递归遍历Temp目录，删除项目中对应的文件
+//        deleteDuplicateFiles(versionHistoryPath, projectPath);
+//
+//        // 将Temp目录中的内容复制到项目根目录
+//        copyFiles(versionHistoryPath, projectPath,paths);
+//        System.out.println("版本回退完成.");
+//
+//        //保存新版本
+//        paths.forEach(System.out::println);
+//        Path baseDir=StartUp.getVersionHistoryPath();
+//
+//        //开始报错
+//        CheckVersionSave check=new CheckVersionSave();
+//        check.checkVersionSave(paths, baseDir.toString());
+//    }
 
     // 辅助函数：删除当前项目中的重复文件
 /*

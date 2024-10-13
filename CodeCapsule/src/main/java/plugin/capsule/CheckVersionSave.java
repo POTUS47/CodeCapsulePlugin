@@ -53,7 +53,7 @@ public class CheckVersionSave {
                 writer.newLine();
                 writer.write("无描述");  // 写描述
                 writer.newLine();
-                writer.write("创建时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
+                writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
             }
             System.out.println("Version1 created and project files copied successfully.");
             return true; // 初始版本已创建
@@ -108,7 +108,7 @@ public class CheckVersionSave {
                 writer.newLine();
                 writer.write("无描述");  // 写描述
                 writer.newLine();
-                writer.write("创建时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
+                writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
                 System.out.println("成功创建txt描述文件！！");///////////////////////////
             }
         }else {
