@@ -87,7 +87,8 @@ public class CheckVersionSave {
             if (projectRootPath == null) {
                 throw new IllegalStateException("项目根路径未设置");
             }
-            Path absolutePath = projectRootPath.resolve(filePath).normalize();// 将相对路径转换为绝对路径
+            Path newPath = projectRootPath.resolve("src");/////改为src
+            Path absolutePath = newPath.resolve(filePath).normalize();// 将相对路径转换为绝对路径
             System.out.println("转换成的绝对路径："+absolutePath);///////////////////////////
             File file = absolutePath.toFile();// 将 Path 转为 File
 
