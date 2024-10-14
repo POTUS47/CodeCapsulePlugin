@@ -24,7 +24,7 @@ import static com.jayway.jsonpath.Filter.filter;
 
 public class VersionManage {
     // 对外接口：手动保存当前版本
-    public static void saveMannually(boolean isRevertVersion,String revertVersionNum){\
+    public static void saveMannually(boolean isRevertVersion,String revertVersionNum){
         StartUp.timer.resetTimer100();//手动调整计时器，防止重复保存
         List<Path> changedFile=FileChangeListener.getChangedFilePath();//调用接口查看当前有修改的文件列表
         if (changedFile.isEmpty()) {
