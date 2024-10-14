@@ -83,8 +83,8 @@ class DirTree extends JPanel {
                         // 获取选中节点的文件名
                         String selectedFileName = (String) selectedNode.getUserObject();
                         // 根据文件名查找对应的 VirtualFile
-                        VirtualFile selectedFile = findFileInProject(selectedFileName, dir);
-                        if (selectedFile != null) {
+                        VirtualFile selectedFile = findFile(selectedFileName, dir);
+                        if (selectedFile != null&&!selectedFile.isDirectory()) {
                             //openFileInEditor(selectedFile);
                             // 获取文件的相对路径，相对于 VersionHistory/Temp/src/
                             String relativePath = getRelativePath(selectedFile, dir);
@@ -107,6 +107,21 @@ class DirTree extends JPanel {
         this.repaint();
     }
 
+    //递归在文件夹下寻找文件
+    private VirtualFile findFile(String fileName, VirtualFile dir) {
+        for (VirtualFile child : dir.getChildren()) {
+            if(fileName.equals(child.getName())) {
+                return child;
+            }else{
+                VirtualFile result=findFile(fileName, child);
+                if(result!=null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
     // 递归方法生成树节点
     private void createTreeNodes(DefaultMutableTreeNode node, VirtualFile file) {
         if (file.isDirectory()) { // 如果是目录
@@ -117,17 +132,6 @@ class DirTree extends JPanel {
                 createTreeNodes(childNode, child);
             }
         }
-    }
-
-    // 根据文件名查找对应的 VirtualFile
-    private VirtualFile findFileInProject(String fileName, VirtualFile currentDir) {
-        // 遍历当前目录的子文件
-        for (VirtualFile file : currentDir.getChildren()) {
-            if (file.getName().equals(fileName)) {
-                return file;
-            }
-        }
-        return null;
     }
 
     // 在编辑器中打开文件
