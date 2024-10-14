@@ -29,7 +29,7 @@ public class Timer {
             System.out.println("当前时间：" + currentTime + "秒");
 
             // 当计时器达到15秒时，执行回调函数
-            if (currentTime == 5) {////////////////
+            if (currentTime == 15) {////////////////
                 System.out.println("到达15s");
                 try {
                     onTimeReached15();
@@ -60,8 +60,8 @@ public class Timer {
 
 
         //下面两行用来生成版本
-/*        CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());*/
+//        CheckVersionSave check=new CheckVersionSave();
+//        check.checkVersionSave(paths, baseDir.toString());
 
         //下面一行是我测试版本回退的代码（在TMEP文件夹里回退到第一版） 这行代码不要和上面的两行同时运行！
         //VersionManage.CheckOneVersion("Version2");
