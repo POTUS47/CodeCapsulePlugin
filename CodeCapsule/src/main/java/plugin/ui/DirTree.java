@@ -85,7 +85,7 @@ class DirTree extends JPanel {
                             String relativePath = getRelativePath(selectedFile, dir);
                             System.out.println("Selected file relative path: " + relativePath);
 
-                            diffShow(relativePath);
+                            diffShow(relativePath,Version);
                         }
                     }
                 });
@@ -135,7 +135,7 @@ class DirTree extends JPanel {
     }
 
     //差异比较,传入比较版本相对于src的路径
-    private void diffShow(String relativePath){
+    private void diffShow(String relativePath,String Version){
         String currentVersionFilePath=project.getBasePath()+"/src/"+relativePath;
         String otherVersionFilePath= project.getBasePath()+"/VersionHistory/Temp/src/"+relativePath;
 
@@ -174,7 +174,7 @@ class DirTree extends JPanel {
             DiffContent content2 = DiffContentFactory.getInstance().create(snapshotContentB);
 
             // 创建并显示差异请求
-            SimpleDiffRequest request = new SimpleDiffRequest("String Comparison", content1, content2, "Current Version", "Other Version");
+            SimpleDiffRequest request = new SimpleDiffRequest("String Comparison", content1, content2, "Current Version", Version);
 
 
             DiffManager.getInstance().showDiff(project, request);
