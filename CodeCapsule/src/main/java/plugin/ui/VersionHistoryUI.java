@@ -32,6 +32,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
     private Project project;
     private DirTree dirTree;
     private JButton backButton;
+    private JButton revertButton;
     private JLabel versionId;
 
     @Override
@@ -50,6 +51,18 @@ public final class VersionHistoryUI implements ToolWindowFactory {
                 toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
                 toolWindow.getComponent().revalidate();
                 toolWindow.getComponent().repaint();
+            }
+        });
+        revertButton = new JButton("Revert");
+        revertButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 切换到空面板
+                try {
+                    VersionManage.RevertToOneVersion(revertButton.getName());
+                } catch (IOException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
         // 显示版本列表的面板
@@ -173,13 +186,15 @@ public final class VersionHistoryUI implements ToolWindowFactory {
     private void switchToEmptyPanel(String Id,ToolWindow toolWindow) throws IOException, ClassNotFoundException {
         VersionManage.CheckOneVersion(Id);
         versionId.setText(Id);
+        revertButton.setName(Id);
         // 将返回按钮放在左上角
         JPanel topPanel = new JPanel(new BorderLayout()); // 使用 BorderLayout
         topPanel.setBorder(new EmptyBorder(5, 15, 5, 10));
         // 创建并添加 versionId 到左侧
-        topPanel.add(versionId, BorderLayout.WEST); // 将 versionId 放在左边
+        topPanel.add(versionId, BorderLayout.CENTER); // 将 versionId 放在左边
         // 创建并添加 backButton 到右侧
-        topPanel.add(backButton, BorderLayout.EAST); // 将 backButton 放在右边
+        topPanel.add(backButton, BorderLayout.WEST); // 将 backButton 放在右边
+        topPanel.add(revertButton, BorderLayout.EAST);
 
         dirTree.loadDirectory("Version2");
         dirTree.add(topPanel, BorderLayout.NORTH);
