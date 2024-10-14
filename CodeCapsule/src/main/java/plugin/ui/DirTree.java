@@ -1,30 +1,19 @@
 package plugin.ui;
 import com.intellij.diff.DiffContentFactory;
+import com.intellij.diff.DiffDialogHints;
 import com.intellij.diff.contents.DiffContent;
-import plugin.capsule.LoadDocsCompressed;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-
 import com.intellij.ui.components.JBScrollPane;
-import plugin.capsule.SnapShot;
-
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import com.intellij.diff.contents.DocumentContentImpl;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.diff.DiffManager;
 import com.intellij.diff.requests.SimpleDiffRequest;
-
-
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -181,24 +170,23 @@ class DirTree extends JPanel {
             }
 
             // 创建 DiffContent 对象
-//            DiffContent content1 = createContentFromString(snapshotContentA);
-//            DiffContent content2 = createContentFromString(snapshotContentB);
             DiffContent content1 = DiffContentFactory.getInstance().create(snapshotContentA);
             DiffContent content2 = DiffContentFactory.getInstance().create(snapshotContentB);
+
             // 创建并显示差异请求
             SimpleDiffRequest request = new SimpleDiffRequest("String Comparison", content1, content2, "Current Version", "Other Version");
+
+
             DiffManager.getInstance().showDiff(project, request);
+
+
 
         } catch (IOException ex) {
             Messages.showErrorDialog("加载文件时发生错误: " + ex.getMessage(), "错误");
         }
     }
 
-    private DiffContent createContentFromString(String content) {
-        Document document = EditorFactory.getInstance().createDocument(content);
-        return new DocumentContentImpl(document);
-//        return DiffContentFactory.getInstance().create(project, content);
-    }
+
     // 根据文件获取其相对于特定目录（如 VersionHistory/Temp/src/）的路径
     private String getRelativePath(VirtualFile file, VirtualFile baseDir) {
         // 获取基准目录路径
@@ -211,7 +199,8 @@ class DirTree extends JPanel {
             // 返回相对路径，去掉前缀部分并去除前导斜杠
             return filePath.substring(baseDirPath.length() + 1);
         }
-        return file.getName(); // 如果无法计算相对路径，则返回文件名
+        // 如果无法计算相对路径，则返回文件名
+        return file.getName();
     }
 
 }
