@@ -38,7 +38,7 @@ import java.nio.file.Paths;
 
 // 自定义面板类，用于展示项目的目录树
 class DirTree extends JPanel {
-    private final Project project;
+    private  Project project;
     private JTree tree;
 
     public DirTree(Project project) {
@@ -50,16 +50,21 @@ class DirTree extends JPanel {
 
     // 加载指定目录下的文件树，relativePath 为相对于根目录的路径
     public void loadDirectory(String Version)  {
+
         //加载版本文件到Temp/src里
         //VersionManage.CheckOneVersion(Version);
 
         // 清空当前面板中的所有组件
         this.removeAll();
+        // 重新验证组件
+        this.revalidate();
+        // 重绘面板
+        this.repaint();
 
         //添加个Label
-        JLabel label=new JLabel(Version);
-        label.setBorder(new EmptyBorder(5, 10, 5, 10));
-        this.add(label, BorderLayout.NORTH);
+//        JLabel label=new JLabel(Version);
+//        label.setBorder(new EmptyBorder(5, 10, 5, 10));
+//        this.add(label, BorderLayout.NORTH);
 
         // 获取项目根目录的 VirtualFile 对象
         VirtualFile projectBaseDir = project.getBaseDir();
@@ -70,6 +75,7 @@ class DirTree extends JPanel {
             if (dir != null) {
                 // 创建根节点
                 DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(dir.getName());
+                dir.refresh(false, true);
                 createTreeNodes(rootNode, dir); // 生成树节点
 
                 // 创建树模型并绑定到 JTree
@@ -101,10 +107,7 @@ class DirTree extends JPanel {
             }
         }
 
-        // 重新验证组件
-        this.revalidate();
-        // 重绘面板
-        this.repaint();
+
     }
 
     //递归在文件夹下寻找文件
