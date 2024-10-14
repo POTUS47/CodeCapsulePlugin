@@ -72,5 +72,9 @@ public class Timer {
 
     }
 
+    public void resetTimer100() {
+        currentTime = 100; // 重置时间为100秒
+    }
+
 
 }
