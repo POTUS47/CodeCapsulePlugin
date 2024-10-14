@@ -60,10 +60,8 @@ public class Timer {
 
 
         //下面两行用来生成版本
-        CheckVersionSave check=new CheckVersionSave();
-        check.checkVersionSave(paths, baseDir.toString());
-        //清空修改的路径记录
-        FileChangeListener.clearChangedFilePath();
+/*        CheckVersionSave check=new CheckVersionSave();
+        check.checkVersionSave(paths, baseDir.toString());*/
 
         //下面一行是我测试版本回退的代码（在TMEP文件夹里回退到第一版） 这行代码不要和上面的两行同时运行！
         //VersionManage.CheckOneVersion("Version2");

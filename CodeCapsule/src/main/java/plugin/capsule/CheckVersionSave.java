@@ -116,7 +116,7 @@ public class CheckVersionSave {
             changesDir.delete(); // 直接删除空文件夹
             System.out.println("当前版本与旧版本相同！！");///////////////////////////
         }
-
+        FileChangeListener.clearChangedFilePath();//清空修改的路径记录
         return hasChanges;
     }
 
@@ -141,7 +141,7 @@ public class CheckVersionSave {
     }
 
     // 获取最新的版本目录
-    private File getLastVersionDirectory(String baseDir) {
+    public static File getLastVersionDirectory(String baseDir) {
         File baseDirectory = new File(baseDir);
         File[] versionDirs = baseDirectory.listFiles(File::isDirectory);
         File lastVersionDir = null;
