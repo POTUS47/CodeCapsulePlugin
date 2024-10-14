@@ -1,4 +1,10 @@
 package plugin.ui;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiDocumentManager;
 import plugin.capsule.StartUp;
 import plugin.capsule.StartUp.*;
 
@@ -27,6 +33,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public final class VersionHistoryUI implements ToolWindowFactory {
     private Project project;
@@ -46,7 +53,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 切换回版本面板
-                JPanel versionPanel = getVersionInfo(toolWindow);
+                JScrollPane versionPanel = getVersionInfo(toolWindow);
                 toolWindow.getComponent().removeAll();
                 toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
                 toolWindow.getComponent().revalidate();
@@ -60,13 +67,22 @@ public final class VersionHistoryUI implements ToolWindowFactory {
                 // 切换到空面板
                 try {
                     VersionManage.RevertToOneVersion(revertButton.getName());
+                    VirtualFile a =getCurrentFile(project);
+                    // 保存并刷新文档
+                    refreshFileInEditor(a);
+
+                    // 同步 PSI 文档
+                    commitAndRefreshDocument(FileEditorManager.getInstance(project).getSelectedTextEditor());
+
+                    // 刷新整个虚拟文件系统
+                    refreshProjectFiles();
                 } catch (IOException | ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
         // 显示版本列表的面板
-        JPanel versionPanel = getVersionInfo(toolWindow);
+        JScrollPane versionPanel = getVersionInfo(toolWindow);
 
         // 创建工具栏，并在上方添加刷新按钮
         JToolBar toolBar = new JToolBar();
@@ -79,7 +95,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         // 添加刷新按钮的点击事件
         refreshButton.addActionListener(e -> {
             // 刷新操作，比如重新加载版本列表
-            JPanel updatedVersionPanel = getVersionInfo(toolWindow);
+            JScrollPane updatedVersionPanel = getVersionInfo(toolWindow);
             toolWindow.getComponent().remove(versionPanel);  // 移除旧版本面板
             toolWindow.getComponent().add(updatedVersionPanel, BorderLayout.CENTER);  // 添加更新后的版本面板
             toolWindow.getComponent().revalidate();
@@ -93,17 +109,36 @@ public final class VersionHistoryUI implements ToolWindowFactory {
 
     }
 
-    public JPanel getVersionInfo(ToolWindow toolWindow){
+    public JScrollPane getVersionInfo(ToolWindow toolWindow) {
         JPanel versionPanel = new JPanel();
-        // 获取版本目录路径
+        versionPanel.setLayout(new BoxLayout(versionPanel, BoxLayout.Y_AXIS)); // 垂直布局
 
+        // 获取版本目录路径
         File versionHistoryDir = new File(project.getBasePath() + "/VersionHistory");
 
         // 检查版本历史目录是否存在
         if (versionHistoryDir.exists() && versionHistoryDir.isDirectory()) {
             File[] versionDirs = versionHistoryDir.listFiles(File::isDirectory);
 
-            if (versionDirs != null) {//如果VersionHistory里有版本文件夹
+            if (versionDirs != null) {
+                // 对版本目录根据时间进行排序（读取 version_info.txt 中的时间）
+                Arrays.sort(versionDirs, (dir1, dir2) -> {
+                    File versionInfoFile1 = new File(dir1, "version_info.txt");
+                    File versionInfoFile2 = new File(dir2, "version_info.txt");
+
+                    try {
+                        String time1 = getVersionTime(versionInfoFile1);
+                        String time2 = getVersionTime(versionInfoFile2);
+
+                        // 按照时间排序，最新的在上面
+                        return time2.compareTo(time1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return 0;
+                });
+
+                // 遍历排序后的版本目录
                 for (File versionDir : versionDirs) {
                     File versionInfoFile = new File(versionDir, "version_info.txt");
 
@@ -117,11 +152,10 @@ public final class VersionHistoryUI implements ToolWindowFactory {
                             reader.close();
 
                             // 创建按钮，显示版本信息
-                            String Id= versionDir.getName();
-                            JButton versionButton = createVersionButton(Id,toolWindow,versionName, versionDescription, versionTime);
+                            String Id = versionDir.getName();
+                            JButton versionButton = createVersionButton(Id, toolWindow, versionName, versionDescription, versionTime);
                             versionPanel.add(versionButton);
                             versionPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 添加间距
-
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -130,8 +164,65 @@ public final class VersionHistoryUI implements ToolWindowFactory {
                 }
             }
         }
-        return versionPanel;
+
+        // 创建带有滚动条的面板
+        JScrollPane scrollPane = new JScrollPane(versionPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setPreferredSize(new Dimension(400, 550)); // 可根据需要调整大小
+
+        return scrollPane;
     }
+
+    // 获取版本时间的方法
+    private String getVersionTime(File versionInfoFile) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(versionInfoFile));
+        reader.readLine(); // 跳过版本名称
+        reader.readLine(); // 跳过版本描述
+        String versionTime = reader.readLine(); // 获取版本时间
+        reader.close();
+        return versionTime;
+    }
+
+
+//    public JPanel getVersionInfo(ToolWindow toolWindow){
+//        JPanel versionPanel = new JPanel();
+//        // 获取版本目录路径
+//
+//        File versionHistoryDir = new File(project.getBasePath() + "/VersionHistory");
+//
+//        // 检查版本历史目录是否存在
+//        if (versionHistoryDir.exists() && versionHistoryDir.isDirectory()) {
+//            File[] versionDirs = versionHistoryDir.listFiles(File::isDirectory);
+//
+//            if (versionDirs != null) {//如果VersionHistory里有版本文件夹
+//                for (File versionDir : versionDirs) {
+//                    File versionInfoFile = new File(versionDir, "version_info.txt");
+//
+//                    if (versionInfoFile.exists()) {
+//                        try {
+//                            // 读取 version_info.txt 文件
+//                            BufferedReader reader = new BufferedReader(new FileReader(versionInfoFile));
+//                            String versionName = reader.readLine(); // 第一行：版本名称
+//                            String versionDescription = reader.readLine(); // 第二行：版本描述
+//                            String versionTime = reader.readLine(); // 第三行：记录时间
+//                            reader.close();
+//
+//                            // 创建按钮，显示版本信息
+//                            String Id= versionDir.getName();
+//                            JButton versionButton = createVersionButton(Id,toolWindow,versionName, versionDescription, versionTime);
+//                            versionPanel.add(versionButton);
+//                            versionPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 添加间距
+//
+//
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return versionPanel;
+//    }
 
     // 创建包含版本信息的按钮
     private JButton createVersionButton(String buttonId,ToolWindow toolWindow,String versionName, String versionDescription, String versionTime) {
@@ -148,7 +239,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         versionButton.setBackground(Color.GRAY);  // 背景色
         versionButton.setForeground(Color.cyan);  // 前景色
         versionButton.setFont(new Font("Monaco", Font.PLAIN, 14));  // 字体
-        versionButton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));  // 设置按钮的边框
+        versionButton.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.GRAY));
 
         // 设置按钮的悬停效果
         versionButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -196,7 +287,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         topPanel.add(backButton, BorderLayout.WEST); // 将 backButton 放在右边
         topPanel.add(revertButton, BorderLayout.EAST);
 
-        dirTree.loadDirectory("Version2");
+        dirTree.loadDirectory(Id);
         dirTree.add(topPanel, BorderLayout.NORTH);
 
 
@@ -206,5 +297,44 @@ public final class VersionHistoryUI implements ToolWindowFactory {
 //        toolWindow.getComponent().revalidate();
 //        toolWindow.getComponent().repaint();
 
+    }
+
+    public VirtualFile getCurrentFile(Project project) {
+        // 获取当前活动的文件
+        VirtualFile file = FileEditorManager.getInstance(project).getSelectedFiles()[0];
+        if (file != null) {
+            System.out.println("当前打开的文件: " + file.getPath());
+        } else {
+            System.out.println("当前没有打开的文件");
+        }
+        return file;
+    }
+
+    public Editor getCurrentEditor(Project project) {
+        // 获取当前活动的编辑器
+        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        if (editor != null) {
+            System.out.println("当前打开的编辑器: " + editor.getDocument().getText());
+        } else {
+            System.out.println("当前没有打开的编辑器");
+        }
+        return editor;
+    }
+
+    public void refreshFileInEditor(VirtualFile file) {
+        // 保存并刷新文件
+        FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+        fileDocumentManager.saveAllDocuments(); // 保存所有打开的文档
+
+        // 刷新虚拟文件系统
+        file.refresh(false, false);
+    }
+    public void refreshProjectFiles() {
+        // 刷新整个虚拟文件系统
+        VirtualFileManager.getInstance().syncRefresh();
+    }
+    public void commitAndRefreshDocument(Editor editor) {
+        // 提交所有文档更改并刷新编辑器
+        PsiDocumentManager.getInstance(editor.getProject()).commitAllDocuments();
     }
 }
