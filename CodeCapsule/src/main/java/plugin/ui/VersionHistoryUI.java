@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.ui.JBColor;
 import plugin.capsule.StartUp;
 import plugin.capsule.StartUp.*;
 
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import plugin.capsule.VersionManage;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -155,7 +157,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
                             String Id = versionDir.getName();
                             JButton versionButton = createVersionButton(Id, toolWindow, versionName, versionDescription, versionTime);
                             versionPanel.add(versionButton);
-                            versionPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 添加间距
+//                            versionPanel.add(Box.createRigidArea(new Dimension(0, 10))); // 添加间距
 
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -236,21 +238,31 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         versionButton.setName(buttonId);
         versionButton.setHorizontalAlignment(SwingConstants.LEFT); // 设置文本左对齐
         // 设置按钮的背景颜色、前景色和字体
-        versionButton.setBackground(Color.GRAY);  // 背景色
-        versionButton.setForeground(Color.cyan);  // 前景色
+//        versionButton.setBackground(Color.GRAY);  // 背景色
+//        versionButton.setForeground(Color.cyan);  // 前景色
+
+        //设置按钮透明
+        versionButton.setContentAreaFilled(false);
         versionButton.setFont(new Font("Monaco", Font.PLAIN, 14));  // 字体
-        versionButton.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.GRAY));
+        //versionButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.GRAY));
+
+        // 创建组合边框:底部边框+padding
+        Border matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.GRAY);
+        Border paddingBorder = BorderFactory.createEmptyBorder(5, 10, 5, 10);
+        versionButton.setBorder(BorderFactory.createCompoundBorder(matteBorder, paddingBorder));
 
         // 设置按钮的悬停效果
         versionButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                versionButton.setBackground(Color.LIGHT_GRAY);  // 鼠标悬停时背景色变浅
+                versionButton.setContentAreaFilled(true);
+                versionButton.setBackground(JBColor.LIGHT_GRAY);  // 鼠标悬停时背景色变浅
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                versionButton.setBackground(Color.GRAY);  // 鼠标移开时恢复背景色
+                versionButton.setContentAreaFilled(false);
+//                versionButton.setBackground(JBColor.GRAY);  // 鼠标移开时恢复背景色
             }
         });
 
@@ -278,11 +290,12 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         VersionManage.CheckOneVersion(Id);
         versionId.setText(Id);
         revertButton.setName(Id);
+        revertButton.setText("Revert to "+Id);
         // 将返回按钮放在左上角
         JPanel topPanel = new JPanel(new BorderLayout()); // 使用 BorderLayout
         topPanel.setBorder(new EmptyBorder(5, 15, 5, 10));
         // 创建并添加 versionId 到左侧
-        topPanel.add(versionId, BorderLayout.CENTER); // 将 versionId 放在左边
+        //topPanel.add(versionId, BorderLayout.WEST); // 将 versionId 放在左边
         // 创建并添加 backButton 到右侧
         topPanel.add(backButton, BorderLayout.WEST); // 将 backButton 放在右边
         topPanel.add(revertButton, BorderLayout.EAST);
