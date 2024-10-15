@@ -1,6 +1,5 @@
 package plugin.ui;
 import com.intellij.diff.DiffContentFactory;
-import com.intellij.diff.DiffDialogHints;
 import com.intellij.diff.contents.DiffContent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -50,11 +49,6 @@ class DirTree extends JPanel {
         // 重绘面板
         this.repaint();
 
-        //添加个Label
-//        JLabel label=new JLabel(Version);
-//        label.setBorder(new EmptyBorder(5, 10, 5, 10));
-//        this.add(label, BorderLayout.NORTH);
-
         // 获取项目根目录的 VirtualFile 对象
         VirtualFile projectBaseDir = project.getBaseDir();
 
@@ -85,14 +79,37 @@ class DirTree extends JPanel {
                             String relativePath = getRelativePath(selectedFile, dir);
                             System.out.println("Selected file relative path: " + relativePath);
 
-                            diffShow(relativePath);
+                            diffShow(relativePath,Version);
                         }
                     }
                 });
+//                //添加个Label
+//                JLabel label=new JLabel(Version);
+//                label.setBorder(new EmptyBorder(5, 10, 5, 10));
+//                this.add(label, BorderLayout.SOUTH);
+//
+//                // 可以滚动的面板，包含 JTree
+//                JBScrollPane scrollPane = new JBScrollPane(tree);
+//                this.add(scrollPane, BorderLayout.CENTER);
+                // 创建一个 JPanel，使用垂直的 BoxLayout 以垂直排列组件
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-                // 可以滚动的面板，包含 JTree
+                // 添加 JLabel 到 JPanel
+//                JLabel label = new JLabel(Version);
+//                label.setAlignmentX(Component.LEFT_ALIGNMENT); // 左对齐
+//                label.setMaximumSize(new Dimension(Integer.MAX_VALUE, label.getPreferredSize().height));
+//                Border matteBorder = BorderFactory.createMatteBorder(1, 0, 0, 0, JBColor.WHITE);
+//                Border paddingBorder = BorderFactory.createEmptyBorder(5, 10, 5, 10);
+//                label.setBorder(BorderFactory.createCompoundBorder(matteBorder, paddingBorder));
+//                panel.add(label);
+
+                // 添加 JBScrollPane（包含 JTree）到 JPanel
                 JBScrollPane scrollPane = new JBScrollPane(tree);
-                this.add(scrollPane, BorderLayout.CENTER);
+                scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+                panel.add(scrollPane);
+                // 将包含 JLabel 和 JBScrollPane 的 JPanel 添加到 BorderLayout.CENTER
+                this.add(panel, BorderLayout.CENTER);
             }
         }
 
@@ -135,7 +152,7 @@ class DirTree extends JPanel {
     }
 
     //差异比较,传入比较版本相对于src的路径
-    private void diffShow(String relativePath){
+    private void diffShow(String relativePath,String Version){
         String currentVersionFilePath=project.getBasePath()+"/src/"+relativePath;
         String otherVersionFilePath= project.getBasePath()+"/VersionHistory/Temp/src/"+relativePath;
 
@@ -174,7 +191,7 @@ class DirTree extends JPanel {
             DiffContent content2 = DiffContentFactory.getInstance().create(snapshotContentB);
 
             // 创建并显示差异请求
-            SimpleDiffRequest request = new SimpleDiffRequest("String Comparison", content1, content2, "Current Version", "Other Version");
+            SimpleDiffRequest request = new SimpleDiffRequest("String Comparison", content1, content2, "Current Version", Version);
 
 
             DiffManager.getInstance().showDiff(project, request);

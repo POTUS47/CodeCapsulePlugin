@@ -2,7 +2,9 @@ package plugin.capsule;
 import com.github.weisj.jsvg.S;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import plugin.ui.MessageShow;
+import plugin.ui.VersionHistoryUI;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -72,7 +74,14 @@ public class VersionManage {
         //把src下的文件解压缩，反序列化
         LoadDocsCompressed.loadSnapshotsFromFolder(srcPath.toString());
         saveMannually(true,VersionName);//接着手动保存一下
+
     }
+
+
+
+
+
+
 
     // 获取某个版本的名称
     public static String getVersionName(String VersionName) {
@@ -232,7 +241,10 @@ public class VersionManage {
         // 根据给定路径查找版本文件夹
         File versionFolder = findVersionFolder(VersionName);
         // 在VersionHistory下创建名为Temp的文件夹
-        File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
+        File tempDir = null; // 在上一级目录创建Temp文件夹
+        if (versionFolder != null) {
+            tempDir = new File(versionFolder.getParentFile(), "Temp");
+        }
         File srcDir = new File(tempDir, "src");
         GetVersionAllFiles(VersionName, srcDir);
         System.out.println("GetVersionAllFiles执行完毕！");
