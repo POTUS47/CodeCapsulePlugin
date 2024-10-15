@@ -63,7 +63,7 @@ public class CompressDocs {
 
                     oos.writeObject(snapshot);  // 序列化对象并写入
                     oos.flush();
-                    System.out.println("chenggong");
+                    //System.out.println("chenggong");
                     //Messages.showInfoMessage("文件快照已成功保存为压缩的二进制文件！", "成功");
                 }
 
