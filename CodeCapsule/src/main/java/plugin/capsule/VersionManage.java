@@ -1,8 +1,8 @@
 package plugin.capsule;
-import com.github.weisj.jsvg.S;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import plugin.ui.MessageShow;
 import plugin.ui.VersionHistoryUI;
 
@@ -13,16 +13,10 @@ import java.nio.file.Files;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.nio.file.Path;
-
-import static com.jayway.jsonpath.Filter.filter;
 
 public class VersionManage {
     // 对外接口：手动保存当前版本
@@ -44,6 +38,7 @@ public class VersionManage {
                         String VersionDes=MessageShow.showInputDialog("版本描述","请输入版本描述","无描述");
                         VersionManage.renameVersion(lastVersionDir.getName(),VersionTitle);
                         VersionManage.reDescribeVersion(lastVersionDir.getName(),VersionDes);
+                        reloadUI();
                     }
                     else{
                         VersionManage.reDescribeVersion(lastVersionDir.getName(),"回退版本：回退到"+VersionManage.getVersionName(revertVersionNum));
@@ -75,6 +70,17 @@ public class VersionManage {
         LoadDocsCompressed.loadSnapshotsFromFolder(srcPath.toString());
         saveMannually(true,VersionName);//接着手动保存一下
 
+    }
+    //重新加载文件树
+    private static void reloadUI(){
+        Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        if (openProjects.length > 0) {
+            Project project = openProjects[0]; // 获取第一个打开的项目
+            ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("VersionHistory");
+            if (VersionHistoryUI.getInstance() != null) {
+                VersionHistoryUI.getInstance().reload(toolWindow);
+            }
+        }
     }
 
 

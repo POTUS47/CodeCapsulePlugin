@@ -1,15 +1,7 @@
 package plugin.capsule;
-import com.github.weisj.jsvg.S;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
-import plugin.ui.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 public class SaveDocs extends AnAction {
 

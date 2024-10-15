@@ -1,5 +1,4 @@
 package plugin.capsule;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,9 +1,7 @@
 package plugin.capsule;
-
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
@@ -26,6 +24,7 @@ public class ProjectCloseListener implements ProjectManagerListener {
             throw new RuntimeException(e);
         }
 
+        StartUp.clearInstance();
     }
 }
 

@@ -4,17 +4,14 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import plugin.ui.VersionHistoryUI;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -127,6 +124,7 @@ public class CheckVersionSave {
         return hasChanges;
     }
 
+    //重新加载文件树
     private void reloadUI(){
         Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
         if (openProjects.length > 0) {
