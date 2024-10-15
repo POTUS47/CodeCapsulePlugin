@@ -4,11 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import java.nio.file.Path;
-
 import java.util.List;
-
 
 //只有StartUp中实例化了Timer
 public class Timer {
@@ -33,11 +30,7 @@ public class Timer {
                 System.out.println("到达10s");
                 try {
                     onTimeReached15();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
+                } catch (IOException | NoSuchAlgorithmException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -58,13 +51,10 @@ public class Timer {
         //C:\Users\10510\IdeaProjects\ untitled2\src\hao.java
         //C:\Users\10510\IdeaProjects\ untitled2\src\huai.java
 
-
         //下面两行用来生成版本
         CheckVersionSave check=new CheckVersionSave();
         check.checkVersionSave(paths, baseDir.toString());
 
-        //下面一行是我测试版本回退的代码（在TMEP文件夹里回退到第一版） 这行代码不要和上面的两行同时运行！
-        //VersionManage.CheckOneVersion("Version2");
     }
 
     public void resetTimer0() {
@@ -76,5 +66,11 @@ public class Timer {
         currentTime = 100; // 重置时间为100秒
     }
 
-
+    // 停止并清除定时器
+    public void shutdownTimer() {
+        if (!scheduler.isShutdown()) {
+            scheduler.shutdownNow(); // 立即停止所有正在执行的任务
+            System.out.println("计时器已停止");
+        }
+    }
 }

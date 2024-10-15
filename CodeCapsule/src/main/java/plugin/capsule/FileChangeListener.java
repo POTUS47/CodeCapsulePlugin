@@ -1,11 +1,9 @@
 package plugin.capsule;
-
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

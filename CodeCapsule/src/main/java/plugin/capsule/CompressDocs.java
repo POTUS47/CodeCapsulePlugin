@@ -1,23 +1,13 @@
 package plugin.capsule;
-//序列化并压缩文件
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPOutputStream;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import java.nio.charset.StandardCharsets;
-
-
 
 
 public class CompressDocs {

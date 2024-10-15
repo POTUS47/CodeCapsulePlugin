@@ -18,12 +18,6 @@ import java.nio.file.Paths;
 
 //调用前需自行保证所需版本已经到Temp里了
 
-//DirTree dirTree= new DirTree(project);
-//dirTree.loadDirectory("Version2");
-//
-////切换方法
-// dirTree.loadDirectory("Version1");
-
 // 自定义面板类，用于展示项目的目录树
 class DirTree extends JPanel {
     private  Project project;
