@@ -68,7 +68,6 @@ public class VersionManage {
         File versionFolder = findVersionFolder(VersionName);
         Path projectDir=StartUp.getProjectRootPath();
         Path srcPath = projectDir.resolve("src");
-        // 在VersionHistory下创建名为Temp的文件夹
         GetVersionAllFiles(VersionName, srcPath.toFile());
         //把src下的文件解压缩，反序列化
         LoadDocsCompressed.loadSnapshotsFromFolder(srcPath.toString());
