@@ -44,7 +44,7 @@ public class ProjectStructure {
 
 // 文件或目录节点类
 class FileNode {
-    private String type;  // "file" or "directory"
+    private String type;  // "file" 或 "directory"
     private String hash;  // 文件的哈希值
     private int lastModifiedVersion;  // 文件的最后修改版本号
     private Map<String, FileNode> children;  // 子目录或文件
