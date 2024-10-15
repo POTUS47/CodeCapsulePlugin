@@ -1,4 +1,9 @@
 package plugin.capsule;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
+import plugin.ui.VersionHistoryUI;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +26,6 @@ import java.util.regex.Pattern;
 
 //使用说明：15s到达时，仅需调用此类的构造函数：checkVersionSave(List<Path> paths, String baseDir)
 public class CheckVersionSave {
-
     private static final String HASH_ALGORITHM = "SHA-256";
     private  File currentVersionDir ;
     // 主方法：接收路径列表并检查是否需要保存为新版本(需修改：V1的txt创建，json识别失败)
@@ -56,6 +60,7 @@ public class CheckVersionSave {
                 writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
             }
             System.out.println("Version1 created and project files copied successfully.");
+            reloadUI();
             return true; // 初始版本已创建
         }
         System.out.println("已经有版本一，开始读取上个版本的json！");/////////////////////////////
@@ -111,15 +116,27 @@ public class CheckVersionSave {
                 writer.write(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  // 写创建时间
                 System.out.println("成功创建txt描述文件！！");///////////////////////////
             }
+            reloadUI();
         }else {
             // 若没有变化，删除创建的 文件夹
             changesDir.delete(); // 直接删除空文件夹
             System.out.println("当前版本与旧版本相同！！");///////////////////////////
         }
         FileChangeListener.clearChangedFilePath();//清空修改的路径记录
+
         return hasChanges;
     }
 
+    private void reloadUI(){
+        Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        if (openProjects.length > 0) {
+            Project project = openProjects[0]; // 获取第一个打开的项目
+            ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("VersionHistory");
+            if (VersionHistoryUI.getInstance() != null) {
+                VersionHistoryUI.getInstance().reload(toolWindow);
+            }
+        }
+    }
     // 解析json文件的接口:需要传入json文件，一个空白的ProjectStructure（调用无参的构造函数创建一个即可）
     public static void JsonConvertToProjectStructure(File jsonFile,ProjectStructure Structure)throws IOException{
         // 读取上一个版本的JSON文件

@@ -6,8 +6,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.ui.JBColor;
-import plugin.capsule.StartUp;
-import plugin.capsule.StartUp.*;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -18,26 +16,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import org.jetbrains.annotations.NotNull;
+
 import plugin.capsule.VersionManage;
 
-import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 public final class VersionHistoryUI implements ToolWindowFactory {
+    private static VersionHistoryUI instance; // 添加静态字段
+
     private Project project;
     private DirTree dirTree;
     private JButton backButton;
@@ -47,6 +39,8 @@ public final class VersionHistoryUI implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         this.project = project;
+        //保存一下当前实例
+        instance = this;
         dirTree= new DirTree(project);
         versionId=new JLabel("Version ID");
         // 添加返回按钮
@@ -105,6 +99,14 @@ public final class VersionHistoryUI implements ToolWindowFactory {
         //toolWindow.getComponent().add(toolBar, BorderLayout.NORTH);  // 将工具栏放在顶部
         toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);  // 将版本面板放在中央
 
+    }
+    // 获取当前实例
+    public static VersionHistoryUI getInstance() {
+        return instance;
+    }
+    // 获取当前实例
+    public Project getProject() {
+        return project;
     }
 
     public JScrollPane getVersionInfo(ToolWindow toolWindow) {
