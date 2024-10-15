@@ -242,7 +242,10 @@ public class VersionManage {
         // 根据给定路径查找版本文件夹
         File versionFolder = findVersionFolder(VersionName);
         // 在VersionHistory下创建名为Temp的文件夹
-        File tempDir = new File(versionFolder.getParentFile(), "Temp"); // 在上一级目录创建Temp文件夹
+        File tempDir = null; // 在上一级目录创建Temp文件夹
+        if (versionFolder != null) {
+            tempDir = new File(versionFolder.getParentFile(), "Temp");
+        }
         File srcDir = new File(tempDir, "src");
         GetVersionAllFiles(VersionName, srcDir);
         System.out.println("GetVersionAllFiles执行完毕！");

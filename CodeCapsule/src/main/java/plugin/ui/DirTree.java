@@ -1,14 +1,10 @@
 package plugin.ui;
 import com.intellij.diff.DiffContentFactory;
-import com.intellij.diff.DiffDialogHints;
 import com.intellij.diff.contents.DiffContent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;

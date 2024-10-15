@@ -55,11 +55,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 切换回版本面板
-                JScrollPane versionPanel = getVersionInfo(toolWindow);
-                toolWindow.getComponent().removeAll();
-                toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
-                toolWindow.getComponent().revalidate();
-                toolWindow.getComponent().repaint();
+                reload(toolWindow);
             }
         });
         revertButton = new JButton("Revert");
@@ -120,7 +116,7 @@ public final class VersionHistoryUI implements ToolWindowFactory {
 
         // 检查版本历史目录是否存在
         if (versionHistoryDir.exists() && versionHistoryDir.isDirectory()) {
-            File[] versionDirs = versionHistoryDir.listFiles(File::isDirectory);
+            File[] versionDirs = versionHistoryDir.listFiles(file -> file.isDirectory() && !file.getName().equals("Temp"));
 
             if (versionDirs != null) {
                 // 对版本目录根据时间进行排序（读取 version_info.txt 中的时间）
@@ -349,5 +345,13 @@ public final class VersionHistoryUI implements ToolWindowFactory {
     public void commitAndRefreshDocument(Editor editor) {
         // 提交所有文档更改并刷新编辑器
         PsiDocumentManager.getInstance(editor.getProject()).commitAllDocuments();
+    }
+    public void reload(ToolWindow toolWindow) {
+        // 切换回版本面板
+        JScrollPane versionPanel = getVersionInfo(toolWindow);
+        toolWindow.getComponent().removeAll();
+        toolWindow.getComponent().add(versionPanel, BorderLayout.CENTER);
+        toolWindow.getComponent().revalidate();
+        toolWindow.getComponent().repaint();
     }
 }

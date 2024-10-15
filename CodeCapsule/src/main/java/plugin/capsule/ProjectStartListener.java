@@ -38,11 +38,11 @@ public class ProjectStartListener  implements ProjectActivity {
 //        } catch (IOException e) {
 //            throw new RuntimeException(e);
 //        }
-        try {
-            VersionManage.CheckOneVersion("Version2");
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            VersionManage.CheckOneVersion("Version2");
+//        } catch (IOException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return Unit.INSTANCE;  // 返回 Kotlin 的 Unit 实例
     }
