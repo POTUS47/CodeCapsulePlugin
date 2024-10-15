@@ -1,5 +1,11 @@
 package plugin.capsule;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import plugin.ui.MessageShow;
+import plugin.ui.VersionHistoryUI;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,6 +38,7 @@ public class VersionManage {
                         String VersionDes=MessageShow.showInputDialog("版本描述","请输入版本描述","无描述");
                         VersionManage.renameVersion(lastVersionDir.getName(),VersionTitle);
                         VersionManage.reDescribeVersion(lastVersionDir.getName(),VersionDes);
+                        reloadUI();
                     }
                     else{
                         VersionManage.reDescribeVersion(lastVersionDir.getName(),"回退版本：回退到"+VersionManage.getVersionName(revertVersionNum));
@@ -63,6 +70,17 @@ public class VersionManage {
         LoadDocsCompressed.loadSnapshotsFromFolder(srcPath.toString());
         saveMannually(true,VersionName);//接着手动保存一下
 
+    }
+    //重新加载文件树
+    private static void reloadUI(){
+        Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        if (openProjects.length > 0) {
+            Project project = openProjects[0]; // 获取第一个打开的项目
+            ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("VersionHistory");
+            if (VersionHistoryUI.getInstance() != null) {
+                VersionHistoryUI.getInstance().reload(toolWindow);
+            }
+        }
     }
 
 

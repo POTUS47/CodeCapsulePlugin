@@ -124,6 +124,7 @@ public class CheckVersionSave {
         return hasChanges;
     }
 
+    //重新加载文件树
     private void reloadUI(){
         Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
         if (openProjects.length > 0) {
